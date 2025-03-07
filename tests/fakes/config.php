@@ -1,0 +1,19 @@
+<?php
+$config = [
+    'backupFTP' => [
+        'remote' => [
+            'host' => '',
+            'protocol' => '',
+            'path' => '',
+            'user' => '',
+            'password' => '',
+        ],
+        'local' => [
+            'path' => '',
+        ],
+        'mirror' => [
+            'parallel' => 5,
+            'delete' => false,
+        ],
+    ],
+];

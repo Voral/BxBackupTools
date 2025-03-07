@@ -1,0 +1,10 @@
+config.*.php
+vendor
+__test
+var
+.php-cs-fixer.php
+reports
+_test_b
+.phpunit.result.cache
+*.log
+!tests/fakes/config.*.php

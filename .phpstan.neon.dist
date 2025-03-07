@@ -1,0 +1,13 @@
+includes:
+    - vendor/phpstan/phpstan-phpunit/extension.neon
+    - vendor/phpstan/phpstan-phpunit/rules.neon
+parameters:
+#    reportUnmatchedIgnoredErrors: false     #to avoid throwing of errors ... if no errors matching the ignored one is raised
+#    scanFiles:  #we need this for some twig based functions
+#        - '%rootDir%/../../../vendor/twig/twig/src/Extension/CoreExtension.php'
+#    bootstrapFiles:
+#        - '%rootDir%/../../../vendor/bin/.phpunit/phpunit-X.X.X/vendor/autoload.php'
+#    ignoreErrors:
+#        - message: '/^Service "[^"]+" is private.$/'
+#          path: '%rootDir%/../../../tests/'
+    level: 2
