@@ -1,8 +1,8 @@
 {
-  "name": "vasoft/bx-backup-tools",
+  "name": "voral/bx-backup-tools",
   "type": "library",
   "license": "MIT",
-  "versioin": "0.0.1",
+  "version": "0.0.1",
   "autoload": {
     "psr-4": {
       "Vasoft\\BxBackupTools\\": "src/"
