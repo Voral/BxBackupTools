@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Vasoft\BxBackupTools\Backup\FTP;
 
-class Downloader extends Client
+final class Downloader extends Client
 {
     protected function getSourcePath(): string
     {

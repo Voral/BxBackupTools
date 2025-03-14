@@ -1,21 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Vasoft\BxBackupTools\Notifier\Console;
 
-use Vasoft\BxBackupTools\Core\Task;
 use Vasoft\BxBackupTools\Core\MessageContainer;
-use Vasoft\BxBackupTools\Core\Handler;
+use Vasoft\BxBackupTools\Core\Task;
 
-class Sender implements Task
+final class Sender implements Task
 {
     public function handle(MessageContainer $message, ?Task $next = null): void
     {
         $next->handle($message);
         $this->push($this->render($message->getStringArray()));
-    }
-
-    public function __construct()
-    {
     }
 
     private function push(string $message): void
@@ -27,7 +24,7 @@ class Sender implements Task
     {
         $message = implode(PHP_EOL, $messageStrings);
         $message = preg_replace('#<br\s*/?>#i', PHP_EOL, $message);
+
         return strip_tags($message);
     }
-
 }

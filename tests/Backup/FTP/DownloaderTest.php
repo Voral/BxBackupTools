@@ -5,6 +5,7 @@ namespace Vasoft\BxBackupTools\Backup\FTP;
 use Mock\MockSystemCmd;
 use PHPUnit\Framework\TestCase;
 use Vasoft\BxBackupTools\Core\MessageContainer;
+use Vasoft\BxBackupTools\Core\System;
 use Vasoft\BxBackupTools\Core\SystemCmd;
 
 class DownloaderTest extends TestCase
@@ -23,7 +24,7 @@ class DownloaderTest extends TestCase
         $settings = array_replace_recursive($this->getDefaultConfig(), $modifier);
         $config = new Config($settings);
         $commandValue = '';
-        $cmd = $this->createStub(SystemCmd::class);
+        $cmd = $this->createStub(System::class);
         $cmd->method('exec')
             ->willReturnCallback(function (string $command, &$output, &$resultCode) use (&$commandValue) {
                 $output = '';
@@ -61,7 +62,7 @@ class DownloaderTest extends TestCase
     public function testDownloadSuccess(): void
     {
         $config = new Config($this->getDefaultConfig());
-        $cmd = $this->createStub(SystemCmd::class);
+        $cmd = $this->createStub(System::class);
         $cmd->method('exec')
             ->willReturn('')
             ->willReturnCallback(function (string $command, &$output, &$resultCode) {
@@ -83,7 +84,7 @@ class DownloaderTest extends TestCase
     public function testDownloadError(): void
     {
         $config = new Config($this->getDefaultConfig());
-        $cmd = $this->createStub(SystemCmd::class);
+        $cmd = $this->createStub(System::class);
         $cmd->method('exec')
             ->willReturn('')
             ->willReturnCallback(function (string $command, &$output, &$resultCode) {

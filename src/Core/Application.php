@@ -1,18 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Vasoft\BxBackupTools\Core;
 
-
-class Application implements Task
+final class Application implements Task
 {
-    /**
-     * @param array $handlers
-     */
     public function __construct(
-        private array $handlers
-    )
-    {
-    }
+        private array $handlers,
+    ) {}
 
     public function handle(MessageContainer $message, ?Task $next = null): void
     {

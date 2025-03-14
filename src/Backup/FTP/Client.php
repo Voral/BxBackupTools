@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Vasoft\BxBackupTools\Backup\FTP;
 
 use Vasoft\BxBackupTools\Core\MessageContainer;
@@ -12,18 +14,13 @@ abstract class Client implements Task
 
     public function __construct(
         protected readonly System $cmd,
-        protected readonly Config $config
-    )
-    {
-    }
+        protected readonly Config $config,
+    ) {}
 
     /**
-     * @param MessageContainer $message
-     * @param Task|null $next
-     * @return void
      * @throws Exception
      */
-    public function handle(MessageContainer $message, ?Task $next = null): void
+    final public function handle(MessageContainer $message, ?Task $next = null): void
     {
         $commands = [];
         $this->fillSSLConfigCommand($commands);
@@ -34,15 +31,10 @@ abstract class Client implements Task
         $output = $return = null;
         $this->cmd->exec($command, $output, $return);
         if ($return !== 0) {
-            throw new Exception($this->getErrorMessage(), $output);
-        } else {
-            $message->add(self::MODULE_ID, $this->getSuccessMessage());
+            throw new Exception($this->getErrorMessage(), $output ?? '');
         }
+        $message->add(self::MODULE_ID, $this->getSuccessMessage());
     }
-
-    abstract protected function getSuccessMessage(): string;
-
-    abstract protected function getErrorMessage(): string;
 
     protected function fillSSLConfigCommand(array &$commands): void
     {
@@ -58,13 +50,9 @@ abstract class Client implements Task
             'mirror %s %s %s',
             implode(' ', $this->getMirrorParams()),
             $this->getSourcePath(),
-            $this->getDestinationPath()
+            $this->getDestinationPath(),
         );
     }
-
-    abstract protected function getSourcePath(): string;
-
-    abstract protected function getDestinationPath(): string;
 
     protected function getOpenCommand(): string
     {
@@ -73,7 +61,7 @@ abstract class Client implements Task
             $this->config->getRemoteProtocol(),
             $this->config->getRemoteUser(),
             $this->config->getRemotePassword(),
-            $this->config->getRemoteHost()
+            $this->config->getRemoteHost(),
         );
     }
 
@@ -86,6 +74,15 @@ abstract class Client implements Task
         if ($this->config->getMirrorDelete()) {
             $result[] = '--delete';
         }
+
         return $result;
     }
+
+    abstract protected function getSuccessMessage(): string;
+
+    abstract protected function getErrorMessage(): string;
+
+    abstract protected function getSourcePath(): string;
+
+    abstract protected function getDestinationPath(): string;
 }

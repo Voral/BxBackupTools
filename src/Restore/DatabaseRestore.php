@@ -1,33 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Vasoft\BxBackupTools\Restore;
 
-use mysqli;
-use mysqli_result;
-
-class DatabaseRestore
+final class DatabaseRestore
 {
-    private bool|null $hasFullTextIndex = null;
-    private false|mysqli $connection;
+    private ?bool $hasFullTextIndex = null;
+    private false|\mysqli $connection;
     private $file;
-    private string $sql = '';
-    private bool $eof = false;
 
     /**
-     * @param string $databaseHost
-     * @param string $databaseName
-     * @param string $databaseLogin
-     * @param string $databasePassword
      * @throws RestoreException
      */
     public function __construct(
         public readonly string $databaseHost,
         public readonly string $databaseName,
         public readonly string $databaseLogin,
-        public readonly string $databasePassword
-
-    )
-    {
+        public readonly string $databasePassword,
+    ) {
         if (!function_exists('mysqli_connect')) {
             throw new RestoreException('MySQLi extension is not installed', []);
         }
@@ -48,8 +39,9 @@ class DatabaseRestore
             if (!($this->file = fopen($fileName, 'rb'))) {
                 throw new RestoreException("Can't open file: " . $fileName);
             }
-            $this->eof = false;
-            while (($sql = $this->readSql()) !== '' && !$this->eof) {
+            $eof = false;
+            $eof = false;
+            while (($sql = $this->readSql()) !== '' && !$eof) {
                 $this->query($sql);
             }
             fclose($this->file);
@@ -59,16 +51,19 @@ class DatabaseRestore
     }
 
     /**
-     * @param string $fileName
-     * @return void
      * @throws RestoreException
      */
     private function onBegin(string $fileName): void
     {
-        $this->connection = mysqli_connect($this->databaseHost, $this->databaseLogin, $this->databasePassword, $this->databaseName);
+        $this->connection = mysqli_connect(
+            $this->databaseHost,
+            $this->databaseLogin,
+            $this->databasePassword,
+            $this->databaseName,
+        );
         if (!$this->connection) {
             throw new RestoreException('Can\'t connect to database', [
-                'error' => mysqli_connect_error()
+                'error' => mysqli_connect_error(),
             ]);
         }
         $this->query('SET FOREIGN_KEY_CHECKS = 0');
@@ -85,7 +80,6 @@ class DatabaseRestore
     }
 
     /**
-     * @return void
      * @throws RestoreException
      */
     private function onEnd(): void
@@ -94,33 +88,32 @@ class DatabaseRestore
     }
 
     /**
-     * @param string $sql
-     * @return bool|mysqli_result
      * @throws RestoreException
      */
-    private function query(string $sql): bool|mysqli_result
+    private function query(string $sql): bool|\mysqli_result
     {
         $sqlCleaned = $this->processFullTextKey($sql);
         $rs = mysqli_query($this->connection, $sqlCleaned);
-//        echo __METHOD__,'  ',__LINE__,PHP_EOL;
         if (!$rs || mysqli_errno($this->connection)) {
-//            echo __METHOD__,'  ',__LINE__,PHP_EOL;
-            if ($this->hasFullTextIndex === null && preg_match("#^CREATE TABLE.*FULLTEXT KEY#ms", $sql)) {
-//                echo __METHOD__,'  ',__LINE__,PHP_EOL;
+            if ($this->hasFullTextIndex === null && preg_match('#^CREATE TABLE.*FULLTEXT KEY#ms', $sql)) {
                 $this->hasFullTextIndex = false;
+
                 return $this->query($sql);
             }
+
             throw new RestoreException(mysqli_error($this->connection));
         }
+
         return $rs;
     }
 
     private function processFullTextKey(string $sql): string
     {
-        if ($this->hasFullTextIndex === false && preg_match("#^CREATE TABLE.*FULLTEXT KEY#ms", $sql)) {
-            $sql = preg_replace("#[\r\n\s]*FULLTEXT KEY[^\r\n]*[\r\n]*#m", "", $sql);
-            $sql = str_replace("),)", "))", $sql);
+        if ($this->hasFullTextIndex === false && preg_match('#^CREATE TABLE.*FULLTEXT KEY#ms', $sql)) {
+            $sql = preg_replace("#[\r\n\\s]*FULLTEXT KEY[^\r\n]*[\r\n]*#m", '', $sql);
+            $sql = str_replace('),)', '))', $sql);
         }
+
         return $sql;
     }
 
@@ -133,25 +126,27 @@ class DatabaseRestore
                 if ($line !== false) {
                     $sql .= $line;
                 }
+
                 return trim($sql);
             }
             $sql .= $line;
         }
+
         return trim($sql);
     }
 
-    protected function getNextName(string $file): string
+    private function getNextName(string $file): string
     {
         $parts = pathinfo($file);
         $baseName = $parts['filename'];
         $extension = $parts['extension'] ?? '';
         if (preg_match('/\.(\d+)$/', $baseName, $matches)) {
-            $partNumber = (int)$matches[1] + 1;
+            $partNumber = (int) $matches[1] + 1;
             $newBaseName = preg_replace('/\.\d+$/', '.' . $partNumber, $baseName);
         } else {
             $newBaseName = $baseName . '.1';
         }
 
-        return $parts['dirname'] . DIRECTORY_SEPARATOR . $newBaseName . '.' . $extension;
+        return $parts['dirname'] . \DIRECTORY_SEPARATOR . $newBaseName . '.' . $extension;
     }
 }

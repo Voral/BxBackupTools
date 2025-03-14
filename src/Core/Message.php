@@ -1,16 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Vasoft\BxBackupTools\Core;
 
-class Message
+final class Message
 {
     public readonly int $time;
 
     public function __construct(
-        public readonly string       $module,
-        public readonly string|array $data,
-    )
-    {
+        public readonly string $module,
+        public readonly array|string $data,
+    ) {
         $this->time = time();
     }
 }

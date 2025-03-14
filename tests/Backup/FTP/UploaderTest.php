@@ -4,7 +4,7 @@ namespace Vasoft\BxBackupTools\Backup\FTP;
 
 use PHPUnit\Framework\TestCase;
 use Vasoft\BxBackupTools\Core\MessageContainer;
-use Vasoft\BxBackupTools\Core\SystemCmd;
+use Vasoft\BxBackupTools\Core\System;
 
 class UploaderTest extends TestCase
 {
@@ -22,7 +22,7 @@ class UploaderTest extends TestCase
         $settings = array_replace_recursive($this->getDefaultConfig(), $modifier);
         $config = new Config($settings);
         $commandValue = '';
-        $cmd = $this->createStub(SystemCmd::class);
+        $cmd = $this->createStub(System::class);
         $cmd->method('exec')
             ->willReturnCallback(function (string $command, &$output, &$resultCode) use (&$commandValue) {
                 $output = '';
@@ -34,21 +34,56 @@ class UploaderTest extends TestCase
         $messages = new MessageContainer();
         $client->handle($messages);
         $this->assertSame($expected, $commandValue, $message);
-
     }
 
     public static function dataConfigRelations(): array
     {
         return [
-            [[], 'lftp -c "set ftp:ssl-allow true;set ssl:verify-certificate no;open ftp://user1:p123@2.3.4.5;mirror --parallel=5 --delete -R /v/bkp /bkp;bye" 2>&1', 'Default Config mistake'],
-            [['mirror' => ['delete' => false]], 'lftp -c "set ftp:ssl-allow true;set ssl:verify-certificate no;open ftp://user1:p123@2.3.4.5;mirror --parallel=5 -R /v/bkp /bkp;bye" 2>&1', 'Mirror Not Delete'],
-            [['mirror' => ['parallel' => 2]], 'lftp -c "set ftp:ssl-allow true;set ssl:verify-certificate no;open ftp://user1:p123@2.3.4.5;mirror --parallel=2 --delete -R /v/bkp /bkp;bye" 2>&1', 'Mirror Parallel'],
-            [['local' => ['path' => '/home/backup']], 'lftp -c "set ftp:ssl-allow true;set ssl:verify-certificate no;open ftp://user1:p123@2.3.4.5;mirror --parallel=5 --delete -R /home/backup /bkp;bye" 2>&1', 'Local Path'],
-            [['remote' => ['password' => 'PassMy']], 'lftp -c "set ftp:ssl-allow true;set ssl:verify-certificate no;open ftp://user1:PassMy@2.3.4.5;mirror --parallel=5 --delete -R /v/bkp /bkp;bye" 2>&1', 'Remote Password'],
-            [['remote' => ['user' => 'user2']], 'lftp -c "set ftp:ssl-allow true;set ssl:verify-certificate no;open ftp://user2:p123@2.3.4.5;mirror --parallel=5 --delete -R /v/bkp /bkp;bye" 2>&1', 'Remote User'],
-            [['remote' => ['path' => '/test']], 'lftp -c "set ftp:ssl-allow true;set ssl:verify-certificate no;open ftp://user1:p123@2.3.4.5;mirror --parallel=5 --delete -R /v/bkp /test;bye" 2>&1', 'Remote Path'],
-            [['remote' => ['protocol' => 'sftp']], 'lftp -c "open sftp://user1:p123@2.3.4.5;mirror --parallel=5 --delete -R /v/bkp /bkp;bye" 2>&1', 'Remote Protocol SFTP'],
-            [['remote' => ['host' => '1.1.1.1']], 'lftp -c "set ftp:ssl-allow true;set ssl:verify-certificate no;open ftp://user1:p123@1.1.1.1;mirror --parallel=5 --delete -R /v/bkp /bkp;bye" 2>&1', 'Remote Host']
+            [
+                [],
+                'lftp -c "set ftp:ssl-allow true;set ssl:verify-certificate no;open ftp://user1:p123@2.3.4.5;mirror --parallel=5 --delete -R /v/bkp /bkp;bye" 2>&1',
+                'Default Config mistake'
+            ],
+            [
+                ['mirror' => ['delete' => false]],
+                'lftp -c "set ftp:ssl-allow true;set ssl:verify-certificate no;open ftp://user1:p123@2.3.4.5;mirror --parallel=5 -R /v/bkp /bkp;bye" 2>&1',
+                'Mirror Not Delete'
+            ],
+            [
+                ['mirror' => ['parallel' => 2]],
+                'lftp -c "set ftp:ssl-allow true;set ssl:verify-certificate no;open ftp://user1:p123@2.3.4.5;mirror --parallel=2 --delete -R /v/bkp /bkp;bye" 2>&1',
+                'Mirror Parallel'
+            ],
+            [
+                ['local' => ['path' => '/home/backup']],
+                'lftp -c "set ftp:ssl-allow true;set ssl:verify-certificate no;open ftp://user1:p123@2.3.4.5;mirror --parallel=5 --delete -R /home/backup /bkp;bye" 2>&1',
+                'Local Path'
+            ],
+            [
+                ['remote' => ['password' => 'PassMy']],
+                'lftp -c "set ftp:ssl-allow true;set ssl:verify-certificate no;open ftp://user1:PassMy@2.3.4.5;mirror --parallel=5 --delete -R /v/bkp /bkp;bye" 2>&1',
+                'Remote Password'
+            ],
+            [
+                ['remote' => ['user' => 'user2']],
+                'lftp -c "set ftp:ssl-allow true;set ssl:verify-certificate no;open ftp://user2:p123@2.3.4.5;mirror --parallel=5 --delete -R /v/bkp /bkp;bye" 2>&1',
+                'Remote User'
+            ],
+            [
+                ['remote' => ['path' => '/test']],
+                'lftp -c "set ftp:ssl-allow true;set ssl:verify-certificate no;open ftp://user1:p123@2.3.4.5;mirror --parallel=5 --delete -R /v/bkp /test;bye" 2>&1',
+                'Remote Path'
+            ],
+            [
+                ['remote' => ['protocol' => 'sftp']],
+                'lftp -c "open sftp://user1:p123@2.3.4.5;mirror --parallel=5 --delete -R /v/bkp /bkp;bye" 2>&1',
+                'Remote Protocol SFTP'
+            ],
+            [
+                ['remote' => ['host' => '1.1.1.1']],
+                'lftp -c "set ftp:ssl-allow true;set ssl:verify-certificate no;open ftp://user1:p123@1.1.1.1;mirror --parallel=5 --delete -R /v/bkp /bkp;bye" 2>&1',
+                'Remote Host'
+            ]
         ];
     }
 
@@ -60,7 +95,7 @@ class UploaderTest extends TestCase
     public function testDownloadSuccess(): void
     {
         $config = new Config($this->getDefaultConfig());
-        $cmd = $this->createStub(SystemCmd::class);
+        $cmd = $this->createStub(System::class);
         $cmd->method('exec')
             ->willReturn('')
             ->willReturnCallback(function (string $command, &$output, &$resultCode) {
@@ -82,7 +117,7 @@ class UploaderTest extends TestCase
     public function testDownloadError(): void
     {
         $config = new Config($this->getDefaultConfig());
-        $cmd = $this->createStub(SystemCmd::class);
+        $cmd = $this->createStub(System::class);
         $cmd->method('exec')
             ->willReturn('')
             ->willReturnCallback(function (string $command, &$output, &$resultCode) {
@@ -95,7 +130,6 @@ class UploaderTest extends TestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Upload error:');
         try {
-
             $client->handle($messages);
         } catch (Exception $e) {
             $this->assertSame(['Test error message'], $e->data);

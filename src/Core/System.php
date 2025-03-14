@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Vasoft\BxBackupTools\Core;
 
 interface System
 {
-    function exec(string $command, &$output, &$resultCode): string|false;
+    public function exec(string $command, &$output, &$resultCode): false|string;
 }

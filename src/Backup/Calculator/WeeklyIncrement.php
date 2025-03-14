@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Vasoft\BxBackupTools\Backup\Calculator;
 
-class WeeklyIncrement implements PathCalculator
+final class WeeklyIncrement implements PathCalculator
 {
-
     public function getNext(string $path): string
     {
         return $path . date('w');

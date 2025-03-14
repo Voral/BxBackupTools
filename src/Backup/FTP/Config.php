@@ -1,28 +1,39 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Vasoft\BxBackupTools\Backup\FTP;
 
 use Vasoft\BxBackupTools\Backup\Calculator\PathCalculator;
 use Vasoft\BxBackupTools\Config\Config as BaseConfig;
 
-class Config extends BaseConfig
+final class Config extends BaseConfig
 {
     protected ?PathCalculator $remotePathCalculator = null;
     protected ?PathCalculator $localPathCalculator = null;
 
     public function __construct(
         array $settings,
-    )
-    {
+    ) {
         parent::__construct($settings);
     }
 
-    public function setRemotePathCalculator(PathCalculator $calculator): static{
+    public static function getCode(): string
+    {
+        return 'backupFTP';
+    }
+
+    public function setRemotePathCalculator(PathCalculator $calculator): static
+    {
         $this->remotePathCalculator = $calculator;
+
         return $this;
     }
-    public function setLocalPathCalculator(PathCalculator $calculator): static{
+
+    public function setLocalPathCalculator(PathCalculator $calculator): static
+    {
         $this->localPathCalculator = $calculator;
+
         return $this;
     }
 
@@ -39,6 +50,7 @@ class Config extends BaseConfig
     public function getRemotePath(): string
     {
         $path = $this->settings['remote']['path'] ?? '';
+
         return $this->remotePathCalculator ? $this->remotePathCalculator->getNext($path) : $path;
     }
 
@@ -55,6 +67,7 @@ class Config extends BaseConfig
     public function getLocalPath(): string
     {
         $path = $this->settings['local']['path'] ?? '';
+
         return $this->localPathCalculator ? $this->localPathCalculator->getNext($path) : $path;
     }
 
@@ -66,10 +79,5 @@ class Config extends BaseConfig
     public function getMirrorDelete(): bool
     {
         return $this->settings['mirror']['delete'] ?? false;
-    }
-
-    public static function getCode(): string
-    {
-        return 'backupFTP';
     }
 }

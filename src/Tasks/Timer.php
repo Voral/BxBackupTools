@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Vasoft\BxBackupTools\Tasks;
 
 use Vasoft\BxBackupTools\Core\MessageContainer;
 use Vasoft\BxBackupTools\Core\Task;
 
-class Timer implements Task
+final class Timer implements Task
 {
     public const MODULE_ID = 'timer';
 
@@ -15,7 +17,7 @@ class Timer implements Task
         $next->handle($message);
         $message->add(
             self::MODULE_ID,
-            sprintf('Execution time: %d sec', microtime(true) - $time)
+            sprintf('Execution time: %d sec', microtime(true) - $time),
         );
     }
 }

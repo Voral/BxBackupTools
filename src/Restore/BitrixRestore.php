@@ -1,14 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Vasoft\BxBackupTools\Restore;
 
-use Exception;
 use Vasoft\BxBackupTools\Core\Exceptions\ProcessException;
 use Vasoft\BxBackupTools\Core\MessageContainer;
 use Vasoft\BxBackupTools\Core\System;
 use Vasoft\BxBackupTools\Core\Task;
 
-class BitrixRestore implements Task
+final class BitrixRestore implements Task
 {
     public const MODULE_ID = 'BitrixRestore';
     private array $errors = [];
@@ -18,20 +19,10 @@ class BitrixRestore implements Task
 
     public function __construct(
         protected readonly System $cmd,
-        protected readonly Config $config
-    )
-    {
-    }
-
-    private function log(string $message): void
-    {
-        $this->messages[] = sprintf('[%s] %s', date('H:i:s'), $message);
-    }
+        protected readonly Config $config,
+    ) {}
 
     /**
-     * @param MessageContainer $message
-     * @param Task|null $next
-     * @return void
      * @throws ProcessException
      * @throws RestoreException
      */
@@ -57,10 +48,12 @@ class BitrixRestore implements Task
         $message->add(self::MODULE_ID, 'Restore completed');
     }
 
+    private function log(string $message): void
+    {
+        $this->messages[] = sprintf('[%s] %s', date('H:i:s'), $message);
+    }
+
     /**
-     * @param string $fileName
-     * @param string $tempDir
-     * @return void
      * @throws RestoreException
      * @throws ProcessException
      */
@@ -86,7 +79,6 @@ class BitrixRestore implements Task
     }
 
     /**
-     * @return void
      * @throws RestoreException
      */
     private function sync(): void
@@ -94,12 +86,11 @@ class BitrixRestore implements Task
         $srcDir = $this->getTempDirectory();
         $dstDir = $this->config->getSiteDocumentRoot();
         $command = sprintf("rsync -a --delete --include='.*' --recursive %s/ %s", $srcDir, $dstDir);
-        $this->exec($command, "Filesystem synchronization cannot be performed");
+        $this->exec($command, 'Filesystem synchronization cannot be performed');
         $this->log('Filesystem synchronization completed');
     }
 
     /**
-     * @return void
      * @throws RestoreException
      */
     private function replaceCredits(): void
@@ -109,24 +100,25 @@ class BitrixRestore implements Task
         $content = file_get_contents($file);
         $content = preg_replace(
             '#\$DBHost ?= ?[\'"][^\'"]*[\'"];#',
-            sprintf("\$DBHost = \"%s\";", $this->config->getDatabaseHost()),
-            $content
+            sprintf('$DBHost = "%s";', $this->config->getDatabaseHost()),
+            $content,
         );
         $content = preg_replace(
             '#\$DBName ?= ?[\'"][^\'"]*[\'"];#',
-            sprintf("\$DBName = \"%s\";", $this->config->getDatabaseName()),
-            $content
+            sprintf('$DBName = "%s";', $this->config->getDatabaseName()),
+            $content,
         );
         $content = preg_replace(
             '#\$DBLogin ?= ?[\'"][^\'"]*[\'"];#',
-            sprintf("\$DBLogin = \"%s\";", $this->config->getDatabaseUser()),
-            $content
+            sprintf('$DBLogin = "%s";', $this->config->getDatabaseUser()),
+            $content,
         );
         $content = preg_replace(
             '#\$DBPassword ?= ?[\'"][^\'"]*[\'"];#',
-            sprintf("\$DBPassword = \"%s\";", $this->config->getDatabasePassword()),
-            $content
+            sprintf('$DBPassword = "%s";', $this->config->getDatabasePassword()),
+            $content,
         );
+
         try {
             file_put_contents($file, $content);
             $file = $tempDir . '/bitrix/.settings.php';
@@ -137,19 +129,15 @@ class BitrixRestore implements Task
                 $config['connections']['value']['default']['login'] = $this->config->getDatabaseUser();
                 $config['connections']['value']['default']['password'] = $this->config->getDatabasePassword();
                 $config['connections']['value']['default']['database'] = $this->config->getDatabaseName();
-                file_put_contents($file, "<" . "?php\nreturn " . var_export($config, true) . ";");
+                file_put_contents($file, '<' . "?php\nreturn " . var_export($config, true) . ';');
                 $this->log('Replaced database credentials in config files');
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             new RestoreException($e->getMessage());
         }
-
     }
 
     /**
-     * @param string $fileName
-     * @param string $tempDir
-     * @return void
      * @throws RestoreException
      */
     private function unpack(string $fileName, string $tempDir): void
@@ -168,6 +156,7 @@ class BitrixRestore implements Task
     {
         $matches = [];
         preg_match('#([^/]+?)(?:\.(tar\.gz|tar|enc\.gz|enc))?$#', $archivePath, $matches);
+
         return $matches[1] ?? $archivePath;
     }
 
@@ -178,50 +167,45 @@ class BitrixRestore implements Task
                 $this->zipped
                     ? "cat `ls -1v %%s*` | gunzip | tail -c +513 | openssl aes-256-ecb -d -in - -out - -K '%s' -nosalt -nopad | tar xf - -C %%s 2>&1"
                     : "cat `ls -1v %%s*` | tail -c +513 | openssl aes-256-ecb -d -in - -out - -K '%s' -nosalt -nopad | tar xf - -C %%s 2>&1",
-                bin2hex(md5($this->config->getArchivePassword()))
+                bin2hex(md5($this->config->getArchivePassword())),
             );
     }
 
     private function getUnzipCommandTemplate(): string
     {
         return $this->zipped
-            ? "cat `ls -1v %s*` | tar xzf - -C %s 2>&1"
-            : "cat `ls -1v %s*` | tar xf - -C %s 2>&1";
+            ? 'cat `ls -1v %s*` | tar xzf - -C %s 2>&1'
+            : 'cat `ls -1v %s*` | tar xf - -C %s 2>&1';
     }
 
     /**
-     * @param string $directory
-     * @return void
      * @throws RestoreException
      */
     private function cleanDirectory(string $directory): void
     {
-        if ($directory == '' || $directory === './' || $directory === '/') {
+        if ($directory === '' || $directory === './' || $directory === '/') {
             throw new RestoreException('Impossible to clean temporary directory');
         }
-        $this->exec("rm -rf $directory", 'Impossible to clean temporary directory');
+        $this->exec("rm -rf {$directory}", 'Impossible to clean temporary directory');
         $this->log('Temporary directory cleaned');
     }
 
     /**
-     * @return string
      * @throws RestoreException
      */
     private function getTempDirectory(): string
     {
         $path = $this->config->getArchivePath() . '/tmp';
         if (!file_exists($path) || !is_dir($path)) {
-            if (!mkdir($path, 0755, true)) {
+            if (!mkdir($path, 0o755, true)) {
                 throw new RestoreException('Impossible to create directory ' . $path);
             }
         }
+
         return $path;
     }
 
     /**
-     * @param string $command
-     * @param string $errorMessage
-     * @return void
      * @throws RestoreException
      */
     private function exec(string $command, string $errorMessage): void
@@ -234,44 +218,44 @@ class BitrixRestore implements Task
             } else {
                 $errors = array_merge($this->errors, $output);
             }
+
             throw new RestoreException(implode("\n", $errors));
         }
     }
 
     /**
-     * @return string
      * @throws RestoreException
      */
     private function getFileName(): string
     {
         $fileName = $this->findNewestFile();
         $fileNameParts = explode('.', $fileName);
-        if (end($fileNameParts) == 'gz') {
+        if (end($fileNameParts) === 'gz') {
             $this->zipped = true;
             array_pop($fileNameParts);
         } else {
             $this->zipped = false;
         }
-        if (end($fileNameParts) == 'enc') {
+        if (end($fileNameParts) === 'enc') {
             $this->encoded = true;
         } else {
             $this->encoded = false;
         }
+
         return $fileName;
     }
 
     /**
-     * @return string
      * @throws RestoreException
      */
     private function findNewestFile(): string
     {
         $directory = $this->config->getArchivePath();
         $files = array_merge(
-            glob($directory . DIRECTORY_SEPARATOR . '*.tar.gz'),
-            glob($directory . DIRECTORY_SEPARATOR . '*.tar'),
-            glob($directory . DIRECTORY_SEPARATOR . '*.enc'),
-            glob($directory . DIRECTORY_SEPARATOR . '*.enc.gz')
+            glob($directory . \DIRECTORY_SEPARATOR . '*.tar.gz'),
+            glob($directory . \DIRECTORY_SEPARATOR . '*.tar'),
+            glob($directory . \DIRECTORY_SEPARATOR . '*.enc'),
+            glob($directory . \DIRECTORY_SEPARATOR . '*.enc.gz'),
         );
         if (empty($files)) {
             throw new RestoreException('Impossible to find archive');
@@ -285,6 +269,7 @@ class BitrixRestore implements Task
                 $newestTime = $fileTime;
             }
         }
+
         return $newestFile;
     }
 }

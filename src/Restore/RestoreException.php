@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Vasoft\BxBackupTools\Restore;
 
-class RestoreException extends \Vasoft\BxBackupTools\Core\Exceptions\ProcessException
+use Vasoft\BxBackupTools\Core\Exceptions\ProcessException;
+
+final class RestoreException extends ProcessException
 {
     public function __construct(string $message, array|string $data = '')
     {

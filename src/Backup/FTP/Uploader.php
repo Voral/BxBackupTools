@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Vasoft\BxBackupTools\Backup\FTP;
 
-class Uploader extends Client
+final class Uploader extends Client
 {
-
     protected function getMirrorParams(): array
     {
         $params = parent::getMirrorParams();
         $params[] = '-R';
+
         return $params;
     }
 
