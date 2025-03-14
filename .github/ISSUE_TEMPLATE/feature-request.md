@@ -1,5 +1,5 @@
 ---
-name: Feature request
+name: Предложить функционал
 about: Предложите новую функцию для пакета
 title: "[FEATURE] Краткое описание предложения"
 labels: enhancement
