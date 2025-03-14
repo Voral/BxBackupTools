@@ -1,5 +1,5 @@
 ---
-name: Support request
+name: Запрос поддержки
 about: Задайте вопрос о работе пакета
 title: "[SUPPORT] Краткое описание вопроса"
 labels: support
