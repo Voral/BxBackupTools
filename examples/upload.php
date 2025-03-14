@@ -5,7 +5,7 @@ use Vasoft\BxBackupTools\Config;
 use Vasoft\BxBackupTools\Backup\FTP;
 use Vasoft\BxBackupTools\Core\Application;
 use Vasoft\BxBackupTools\Core\MessageContainer;
-use Vasoft\BxBackupTools\Notifier\Console\Sender;
+use Vasoft\BxBackupTools\Core\SystemCmd;
 use Vasoft\BxBackupTools\Notifier\Telegram;
 use Vasoft\BxBackupTools\Tasks\Timer;
 
@@ -22,16 +22,14 @@ $configBackup = $configContainer->get(FTP\Config::class);
 $configBackup->setRemotePathCalculator(new WeeklyIncrement());
 /** @var  Telegram\Config $configSender */
 $configSender = $configContainer->get(Telegram\Config::class);
-$cmd = new \Vasoft\BxBackupTools\Core\SystemCmd();
+$cmd = new SystemCmd();
 
 $app = new Application(
-//    new FTP\Uploader($configBackup),
     [
-//        new Telegram\Sender($configSender),
-        new Sender(),
-        new \Vasoft\BxBackupTools\Tasks\Exception(),
-        new Timer(),
-        new FTP\Uploader($cmd, $configBackup),
+        new Telegram\Sender($configSender),  // отправка сообщения о результатах выполнения скрипта
+        new \Vasoft\BxBackupTools\Tasks\Exception(), // обработка исключений
+        new Timer(), // Таймер вычисляющий время выполнения скрипта
+        new FTP\Uploader($cmd, $configBackup), // Загрузка архива на сервер
     ]
 );
 $app->handle(new MessageContainer('H:i:s'));

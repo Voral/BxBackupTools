@@ -28,11 +28,11 @@ $cmd = new \Vasoft\BxBackupTools\Core\SystemCmd();
 
 $app = new Application(
     [
-        new Sender(),
-        new \Vasoft\BxBackupTools\Tasks\Exception(),
-        new Timer(),
-        new BitrixRestore($cmd, $configRestore),
-//        new Downloader($cmd, $configBackup),
+        new Sender(), // отправка сообщения о результатах выполнения скрипта
+        new \Vasoft\BxBackupTools\Tasks\Exception(), // обработка исключений
+        new Timer(), // Таймер вычисляющий время выполнения скрипта
+        new BitrixRestore($cmd, $configRestore), // равзвертывание скачанного архива
+        new Downloader($cmd, $configBackup), // скачивание архива с сервера
     ]
 );
 $messages = new MessageContainer();

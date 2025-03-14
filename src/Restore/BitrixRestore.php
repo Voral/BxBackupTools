@@ -176,8 +176,8 @@ class BitrixRestore implements Task
         return
             sprintf(
                 $this->zipped
-                    ? "cat `ls -1v %%s*` | gunzip | tail -c +513 | openssl aes-256-ecb -d -in - -out - -K '%s' -nosalt -nopad | tar xvf - -C %%s"
-                    : "cat `ls -1v %%s*` | tail -c +513 | openssl aes-256-ecb -d -in - -out - -K '%s' -nosalt -nopad | tar xvf - -C %%s",
+                    ? "cat `ls -1v %%s*` | gunzip | tail -c +513 | openssl aes-256-ecb -d -in - -out - -K '%s' -nosalt -nopad | tar xf - -C %%s 2>&1"
+                    : "cat `ls -1v %%s*` | tail -c +513 | openssl aes-256-ecb -d -in - -out - -K '%s' -nosalt -nopad | tar xf - -C %%s 2>&1",
                 bin2hex(md5($this->config->getArchivePassword()))
             );
     }
@@ -185,8 +185,8 @@ class BitrixRestore implements Task
     private function getUnzipCommandTemplate(): string
     {
         return $this->zipped
-            ? "cat `ls -1v %s*` | tar xzvf - -C %s"
-            : "cat `ls -1v %s*` | tar xvf - -C %s";
+            ? "cat `ls -1v %s*` | tar xzf - -C %s 2>&1"
+            : "cat `ls -1v %s*` | tar xf - -C %s 2>&1";
     }
 
     /**
@@ -228,7 +228,6 @@ class BitrixRestore implements Task
     {
         $result = $output = null;
         $this->cmd->exec($command, $output, $result);
-
         if ($result !== 0) {
             if (empty($output)) {
                 $errors = [$errorMessage];
