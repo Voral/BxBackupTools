@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Vasoft\BxBackupTools\Restore;
 
-final class DatabaseRestore
+class DatabaseRestore
 {
     private ?bool $hasFullTextIndex = null;
     private false|\mysqli $connection;
@@ -39,7 +39,6 @@ final class DatabaseRestore
             if (!($this->file = fopen($fileName, 'rb'))) {
                 throw new RestoreException("Can't open file: " . $fileName);
             }
-            $eof = false;
             $eof = false;
             while (($sql = $this->readSql()) !== '' && !$eof) {
                 $this->query($sql);

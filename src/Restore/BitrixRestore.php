@@ -20,6 +20,7 @@ final class BitrixRestore implements Task
     public function __construct(
         protected readonly System $cmd,
         protected readonly Config $config,
+        protected ?DatabaseRestore $databaseRestore = null,
     ) {}
 
     /**
@@ -32,7 +33,9 @@ final class BitrixRestore implements Task
         $fileName = $this->getFileName();
         $tempDir = $this->getTempDirectory();
         if ($this->config->isUnpackEnabled()) {
-            $this->cleanDirectory($tempDir . '/*');
+            $this->exec("rm -rf {$tempDir}/*", 'Impossible to clean temporary directory');
+            $this->log('Temporary directory cleaned');
+
             $this->unpack($fileName, $tempDir);
         }
         if ($this->config->isRestoreDatabaseEnabled()) {
@@ -62,13 +65,18 @@ final class BitrixRestore implements Task
         $fileNameSingle = $this->getFileNameSimple($fileName);
         $queryDir = $tempDir . '/bitrix/backup/';
         $fileSQL = $queryDir . $fileNameSingle . '.sql';
-        (new DatabaseRestore(
+        $this->getDatabaseRestore()->restore($fileSQL);
+        $this->log(sprintf('Restored database %s', $fileNameSingle));
+    }
+
+    private function getDatabaseRestore(): DatabaseRestore
+    {
+        return $this->databaseRestore ??= new DatabaseRestore(
             $this->config->getDatabaseHost(),
             $this->config->getDatabaseName(),
             $this->config->getDatabaseUser(),
             $this->config->getDatabasePassword(),
-        ))->restore($fileSQL);
-        $this->log(sprintf('Restored database %s', $fileNameSingle));
+        );
     }
 
     private function writeLog(MessageContainer $message): void
@@ -181,23 +189,11 @@ final class BitrixRestore implements Task
     /**
      * @throws RestoreException
      */
-    private function cleanDirectory(string $directory): void
-    {
-        if ($directory === '' || $directory === './' || $directory === '/') {
-            throw new RestoreException('Impossible to clean temporary directory');
-        }
-        $this->exec("rm -rf {$directory}", 'Impossible to clean temporary directory');
-        $this->log('Temporary directory cleaned');
-    }
-
-    /**
-     * @throws RestoreException
-     */
     private function getTempDirectory(): string
     {
         $path = $this->config->getArchivePath() . '/tmp';
         if (!file_exists($path) || !is_dir($path)) {
-            if (!mkdir($path, 0o755, true)) {
+            if (!@mkdir($path, 0o755, true)) {
                 throw new RestoreException('Impossible to create directory ' . $path);
             }
         }

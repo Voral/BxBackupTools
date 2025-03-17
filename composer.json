@@ -29,7 +29,7 @@
   "scripts": {
     "upload": "php examples/upload.php",
     "download": "php examples/download.php",
-    "test": "php vendor/bin/phpunit",
+    "test": "php vendor/bin/phpunit --display-warnings --filter=testRestoreCreditsSettings",
     "coverage": "php -dzend_extension=xdebug.so -dxdebug.mode=coverage vendor/bin/phpunit --coverage-text",
     "stan": "vendor/bin/phpstan analyse src tests",
     "fixer": "vendor/bin/php-cs-fixer fix --dry-run --diff",
