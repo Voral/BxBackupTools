@@ -104,32 +104,39 @@ final class BitrixRestore implements Task
     private function replaceCredits(): void
     {
         $tempDir = $this->getTempDirectory();
-        $file = $tempDir . '/bitrix/php_interface/dbconn.php';
-        $content = file_get_contents($file);
-        $content = preg_replace(
-            '#\$DBHost ?= ?[\'"][^\'"]*[\'"];#',
-            sprintf('$DBHost = "%s";', $this->config->getDatabaseHost()),
-            $content,
-        );
-        $content = preg_replace(
-            '#\$DBName ?= ?[\'"][^\'"]*[\'"];#',
-            sprintf('$DBName = "%s";', $this->config->getDatabaseName()),
-            $content,
-        );
-        $content = preg_replace(
-            '#\$DBLogin ?= ?[\'"][^\'"]*[\'"];#',
-            sprintf('$DBLogin = "%s";', $this->config->getDatabaseUser()),
-            $content,
-        );
-        $content = preg_replace(
-            '#\$DBPassword ?= ?[\'"][^\'"]*[\'"];#',
-            sprintf('$DBPassword = "%s";', $this->config->getDatabasePassword()),
-            $content,
-        );
 
         try {
-            file_put_contents($file, $content);
+            $file = $tempDir . '/bitrix/php_interface/dbconn.php';
+            $content = @file_get_contents($file);
+            if ($content) {
+                $content = preg_replace(
+                    '#\$DBHost ?= ?[\'"][^\'"]*[\'"];#',
+                    sprintf('$DBHost = \'%s\';', $this->config->getDatabaseHost()),
+                    $content,
+                );
+                $content = preg_replace(
+                    '#\$DBName ?= ?[\'"][^\'"]*[\'"];#',
+                    sprintf('$DBName = \'%s\';', $this->config->getDatabaseName()),
+                    $content,
+                );
+                $content = preg_replace(
+                    '#\$DBLogin ?= ?[\'"][^\'"]*[\'"];#',
+                    sprintf('$DBLogin = \'%s\';', $this->config->getDatabaseUser()),
+                    $content,
+                );
+                $content = preg_replace(
+                    '#\$DBPassword ?= ?[\'"][^\'"]*[\'"];#',
+                    sprintf('$DBPassword = \'%s\';', $this->config->getDatabasePassword()),
+                    $content,
+                );
+                file_put_contents($file, $content);
+            } else {
+                throw new RestoreException('File bitrix/php_interface/dbconn.php not found');
+            }
             $file = $tempDir . '/bitrix/.settings.php';
+            if (!file_exists($file)) {
+                throw new RestoreException('File bitrix/.settings.php not found');
+            }
             /** @var array $content */
             $config = require_once $file;
             if (isset($config['connections']['value']['default'])) {
@@ -141,7 +148,7 @@ final class BitrixRestore implements Task
                 $this->log('Replaced database credentials in config files');
             }
         } catch (\Exception $e) {
-            new RestoreException($e->getMessage());
+            throw new RestoreException($e->getMessage());
         }
     }
 
