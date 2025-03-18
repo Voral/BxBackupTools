@@ -1,30 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Vasoft\BxBackupTools\Config;
 
-use JetBrains\PhpStorm\NoReturn;
 use PHPUnit\Framework\TestCase;
 
-class ContainerTest extends TestCase
+/**
+ * @internal
+ * @coversDefaultClass \Vasoft\BxBackupTools\Config\Container
+ */
+final class ContainerTest extends TestCase
 {
-    private function getContainer(): Container{
-        static $container = null;
-        if ($container === null) {
-            $container = new Container([
-                TestContainerConfig1::CODE => ['key1' => 'value1'],
-                TestContainerConfig2::CODE => ['key2' => 'value2'],
-            ]);
-        }
-        return $container;
-    }
-
     /**
      * Контейнер должен принимать настройки для всех конфигураций и геттер возвращать объект конфига
      * соответсвующий запрошенному.
-     * @return void
-     *
      */
-    public function testGet()
+    public function testGet(): void
     {
         $container = $this->getContainer();
         /**
@@ -44,9 +36,8 @@ class ContainerTest extends TestCase
 
     /**
      * Если настроек для запрошенного конфига нет в контейнере, то выбрасывается исключение.
-     * @return void
      */
-    public function testGetUnknown()
+    public function testGetUnknown(): void
     {
         self::expectExceptionMessage('Config with code example3 not found');
         self::expectException(\InvalidArgumentException::class);
@@ -55,9 +46,8 @@ class ContainerTest extends TestCase
 
     /**
      * Конструктор для каждого должен вызываться один раз.
-     * @return void
      */
-    public function testGetOnce()
+    public function testGetOnce(): void
     {
         $container = $this->getContainer();
 
@@ -69,6 +59,19 @@ class ContainerTest extends TestCase
         $config1a = $container->get(TestContainerConfig1::class);
         self::assertSame($expectedId, spl_object_id($config1a), 'Multiple configs entity id should be the same');
     }
+
+    private function getContainer(): Container
+    {
+        static $container = null;
+        if ($container === null) {
+            $container = new Container([
+                TestContainerConfig1::CODE => ['key1' => 'value1'],
+                TestContainerConfig2::CODE => ['key2' => 'value2'],
+            ]);
+        }
+
+        return $container;
+    }
 }
 
 class TestContainerConfig1 extends Config
@@ -77,7 +80,7 @@ class TestContainerConfig1 extends Config
 
     public static function getCode(): string
     {
-        return TestContainerConfig1::CODE;
+        return self::CODE;
     }
 
     public function getValue(): string
@@ -92,7 +95,7 @@ class TestContainerConfig2 extends Config
 
     public static function getCode(): string
     {
-        return TestContainerConfig2::CODE;
+        return self::CODE;
     }
 
     public function getValue(): string
@@ -107,6 +110,6 @@ class TestContainerConfig3 extends Config
 
     public static function getCode(): string
     {
-        return TestContainerConfig3::CODE;
+        return self::CODE;
     }
 }

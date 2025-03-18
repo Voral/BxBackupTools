@@ -11,7 +11,7 @@ use Vasoft\BxBackupTools\Core\System;
 
 /**
  * @internal
- * @coversDefaultClass \BitrixRestore
+ * @coversDefaultClass \Vasoft\BxBackupTools\Restore\BitrixRestore
  */
 final class BitrixRestoreTest extends TestCase
 {

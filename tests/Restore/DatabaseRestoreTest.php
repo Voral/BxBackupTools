@@ -63,6 +63,7 @@ function function_exists(string $functionName): bool
 
 /**
  * @internal
+ * @coversDefaultClass \Vasoft\BxBackupTools\Restore\DatabaseRestore
  */
 final class DatabaseRestoreTest extends TestCase
 {

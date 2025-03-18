@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * @see https://phpunit-documentation-russian.readthedocs.io/ru/latest/
  * php -dzend_extension=xdebug.so -dxdebug.mode=coverage vendor/bin/phpunit --coverage-php .phpunit.coverage.php
@@ -8,34 +10,16 @@
 
 namespace Core;
 
-use Vasoft\BxBackupTools\Core\Message;
-use Vasoft\BxBackupTools\Core\MessageContainer;
 use PHPUnit\Framework\TestCase;
+use Vasoft\BxBackupTools\Core\MessageContainer;
 
-class MessageTest extends TestCase
+/**
+ * @internal
+ * @coversDefaultClass \Vasoft\BxBackupTools\Core\Message
+ */
+final class MessageTest extends TestCase
 {
-    /**
-     * @return void
-     * @dataProvider dataTestAdd
-     */
-    public function testAddStringAndArrayTimed(string $module, string|array $messages, array $expected)
-    {
-        $message = new MessageContainer();
-        $message->add($module, $messages);
-        $this->assertEquals($expected, $message->getStringArray());
-    }
-    /**
-     * @return void
-     * @dataProvider dataTestAdd
-     */
-    public function testAddStringAndArray(string $module, string|array $messages, array $expected)
-    {
-        $message = new MessageContainer();
-        $message->add($module, $messages);
-        $this->assertEquals($expected, $message->getStringArray());
-    }
-
-    public static function dataTestAdd(): array
+    public static function dataTestAdd(): iterable
     {
         return [
             ['example1', 'Single string', ['Single string']],
@@ -43,7 +27,27 @@ class MessageTest extends TestCase
         ];
     }
 
-    public function testAddDifferentModules()
+    /**
+     * @dataProvider dataTestAdd
+     */
+    public function testAddStringAndArrayTimed(string $module, array|string $messages, array $expected): void
+    {
+        $message = new MessageContainer();
+        $message->add($module, $messages);
+        $this->assertEquals($expected, $message->getStringArray());
+    }
+
+    /**
+     * @dataProvider dataTestAdd
+     */
+    public function testAddStringAndArray(string $module, array|string $messages, array $expected): void
+    {
+        $message = new MessageContainer();
+        $message->add($module, $messages);
+        $this->assertEquals($expected, $message->getStringArray());
+    }
+
+    public function testAddDifferentModules(): void
     {
         $message = new MessageContainer();
         $message->add('module1', ['String 1 1', 'String 1 2']);

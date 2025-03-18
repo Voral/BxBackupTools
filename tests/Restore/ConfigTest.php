@@ -1,10 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Vasoft\BxBackupTools\Restore;
 
 use PHPUnit\Framework\TestCase;
 
-class ConfigTest extends TestCase
+/**
+ * @internal
+ * @coversDefaultClass \Vasoft\BxBackupTools\Restore\Config
+ */
+final class ConfigTest extends TestCase
 {
     private array $defaultSettings = [
         'loggingEnabled' => true,

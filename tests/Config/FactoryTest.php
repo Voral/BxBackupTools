@@ -10,6 +10,7 @@ use Vasoft\BxBackupTools\Backup\FTP\Config;
 
 /**
  * @internal
+ * @coversDefaultClass \Vasoft\BxBackupTools\Config\Factory
  */
 final class FactoryTest extends TestCase
 {

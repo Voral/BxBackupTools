@@ -1,23 +1,74 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Vasoft\BxBackupTools\Backup\FTP;
 
-use Mock\MockSystemCmd;
 use PHPUnit\Framework\TestCase;
 use Vasoft\BxBackupTools\Core\MessageContainer;
 use Vasoft\BxBackupTools\Core\System;
-use Vasoft\BxBackupTools\Core\SystemCmd;
 
-class DownloaderTest extends TestCase
+/**
+ * @internal
+ * @coversDefaultClass \Vasoft\BxBackupTools\Backup\FTP\Downloader
+ */
+final class DownloaderTest extends TestCase
 {
+    public static function provideConfigRelationsCases(): iterable
+    {
+        return [
+            [
+                [],
+                'lftp -c "set ftp:ssl-allow true;set ssl:verify-certificate no;open ftp://user1:p123@2.3.4.5;mirror --parallel=5 --delete /bkp /v/bkp;bye" 2>&1',
+                'Default Config mistake',
+            ],
+            [
+                ['mirror' => ['delete' => false]],
+                'lftp -c "set ftp:ssl-allow true;set ssl:verify-certificate no;open ftp://user1:p123@2.3.4.5;mirror --parallel=5 /bkp /v/bkp;bye" 2>&1',
+                'Mirror Not Delete',
+            ],
+            [
+                ['mirror' => ['parallel' => 2]],
+                'lftp -c "set ftp:ssl-allow true;set ssl:verify-certificate no;open ftp://user1:p123@2.3.4.5;mirror --parallel=2 --delete /bkp /v/bkp;bye" 2>&1',
+                'Mirror Parallel',
+            ],
+            [
+                ['local' => ['path' => '/home/backup']],
+                'lftp -c "set ftp:ssl-allow true;set ssl:verify-certificate no;open ftp://user1:p123@2.3.4.5;mirror --parallel=5 --delete /bkp /home/backup;bye" 2>&1',
+                'Local Path',
+            ],
+            [
+                ['remote' => ['password' => 'PassMy']],
+                'lftp -c "set ftp:ssl-allow true;set ssl:verify-certificate no;open ftp://user1:PassMy@2.3.4.5;mirror --parallel=5 --delete /bkp /v/bkp;bye" 2>&1',
+                'Remote Password',
+            ],
+            [
+                ['remote' => ['user' => 'user2']],
+                'lftp -c "set ftp:ssl-allow true;set ssl:verify-certificate no;open ftp://user2:p123@2.3.4.5;mirror --parallel=5 --delete /bkp /v/bkp;bye" 2>&1',
+                'Remote User',
+            ],
+            [
+                ['remote' => ['path' => '/test']],
+                'lftp -c "set ftp:ssl-allow true;set ssl:verify-certificate no;open ftp://user1:p123@2.3.4.5;mirror --parallel=5 --delete /test /v/bkp;bye" 2>&1',
+                'Remote Path',
+            ],
+            [
+                ['remote' => ['protocol' => 'sftp']],
+                'lftp -c "open sftp://user1:p123@2.3.4.5;mirror --parallel=5 --delete /bkp /v/bkp;bye" 2>&1',
+                'Remote Protocol SFTP',
+            ],
+            [
+                ['remote' => ['host' => '1.1.1.1']],
+                'lftp -c "set ftp:ssl-allow true;set ssl:verify-certificate no;open ftp://user1:p123@1.1.1.1;mirror --parallel=5 --delete /bkp /v/bkp;bye" 2>&1',
+                'Remote Host',
+            ],
+        ];
+    }
+
     /**
-     * @param array $modifier
-     * @param string $expected
-     * @param string $message
-     * @return void
      * @throws Exception
      * @throws \PHPUnit\Framework\MockObject\Exception
-     * @dataProvider dataConfigRelations
+     * @dataProvider provideConfigRelationsCases
      */
     public function testConfigRelations(array $modifier, string $expected, string $message): void
     {
@@ -26,36 +77,21 @@ class DownloaderTest extends TestCase
         $commandValue = '';
         $cmd = $this->createStub(System::class);
         $cmd->method('exec')
-            ->willReturnCallback(function (string $command, &$output, &$resultCode) use (&$commandValue) {
+            ->willReturnCallback(static function (string $command, &$output, &$resultCode) use (&$commandValue) {
                 $output = '';
                 $resultCode = 0;
                 $commandValue = $command;
+
                 return '';
-            });
+            })
+        ;
         $client = new Downloader($cmd, $config);
         $messages = new MessageContainer();
         $client->handle($messages);
         $this->assertSame($expected, $commandValue, $message);
-
-    }
-
-    public static function dataConfigRelations(): array
-    {
-        return [
-            [[], 'lftp -c "set ftp:ssl-allow true;set ssl:verify-certificate no;open ftp://user1:p123@2.3.4.5;mirror --parallel=5 --delete /bkp /v/bkp;bye" 2>&1', 'Default Config mistake'],
-            [['mirror' => ['delete' => false]], 'lftp -c "set ftp:ssl-allow true;set ssl:verify-certificate no;open ftp://user1:p123@2.3.4.5;mirror --parallel=5 /bkp /v/bkp;bye" 2>&1', 'Mirror Not Delete'],
-            [['mirror' => ['parallel' => 2]], 'lftp -c "set ftp:ssl-allow true;set ssl:verify-certificate no;open ftp://user1:p123@2.3.4.5;mirror --parallel=2 --delete /bkp /v/bkp;bye" 2>&1', 'Mirror Parallel'],
-            [['local' => ['path' => '/home/backup']], 'lftp -c "set ftp:ssl-allow true;set ssl:verify-certificate no;open ftp://user1:p123@2.3.4.5;mirror --parallel=5 --delete /bkp /home/backup;bye" 2>&1', 'Local Path'],
-            [['remote' => ['password' => 'PassMy']], 'lftp -c "set ftp:ssl-allow true;set ssl:verify-certificate no;open ftp://user1:PassMy@2.3.4.5;mirror --parallel=5 --delete /bkp /v/bkp;bye" 2>&1', 'Remote Password'],
-            [['remote' => ['user' => 'user2']], 'lftp -c "set ftp:ssl-allow true;set ssl:verify-certificate no;open ftp://user2:p123@2.3.4.5;mirror --parallel=5 --delete /bkp /v/bkp;bye" 2>&1', 'Remote User'],
-            [['remote' => ['path' => '/test']], 'lftp -c "set ftp:ssl-allow true;set ssl:verify-certificate no;open ftp://user1:p123@2.3.4.5;mirror --parallel=5 --delete /test /v/bkp;bye" 2>&1', 'Remote Path'],
-            [['remote' => ['protocol' => 'sftp']], 'lftp -c "open sftp://user1:p123@2.3.4.5;mirror --parallel=5 --delete /bkp /v/bkp;bye" 2>&1', 'Remote Protocol SFTP'],
-            [['remote' => ['host' => '1.1.1.1']], 'lftp -c "set ftp:ssl-allow true;set ssl:verify-certificate no;open ftp://user1:p123@1.1.1.1;mirror --parallel=5 --delete /bkp /v/bkp;bye" 2>&1', 'Remote Host']
-        ];
     }
 
     /**
-     * @return void
      * @throws Exception
      * @throws \PHPUnit\Framework\MockObject\Exception
      */
@@ -65,11 +101,13 @@ class DownloaderTest extends TestCase
         $cmd = $this->createStub(System::class);
         $cmd->method('exec')
             ->willReturn('')
-            ->willReturnCallback(function (string $command, &$output, &$resultCode) {
+            ->willReturnCallback(static function (string $command, &$output, &$resultCode) {
                 $output = '';
                 $resultCode = 0;
+
                 return '';
-            });
+            })
+        ;
         $client = new Downloader($cmd, $config);
         $messages = new MessageContainer();
         $client->handle($messages);
@@ -77,7 +115,6 @@ class DownloaderTest extends TestCase
     }
 
     /**
-     * @return void
      * @throws Exception
      * @throws \PHPUnit\Framework\MockObject\Exception
      */
@@ -87,24 +124,26 @@ class DownloaderTest extends TestCase
         $cmd = $this->createStub(System::class);
         $cmd->method('exec')
             ->willReturn('')
-            ->willReturnCallback(function (string $command, &$output, &$resultCode) {
+            ->willReturnCallback(static function (string $command, &$output, &$resultCode) {
                 $output = ['Test error message'];
                 $resultCode = 1;
+
                 return '';
-            });
+            })
+        ;
         $client = new Downloader($cmd, $config);
         $messages = new MessageContainer();
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Download error:');
-        try {
 
+        try {
             $client->handle($messages);
         } catch (Exception $e) {
             $this->assertSame(['Test error message'], $e->data);
+
             throw $e;
         }
     }
-
 
     private function getDefaultConfig(): array
     {

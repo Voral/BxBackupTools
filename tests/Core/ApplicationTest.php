@@ -1,18 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Core;
 
 use PHPUnit\Framework\TestCase;
 use Vasoft\BxBackupTools\Core\Application;
-use Vasoft\BxBackupTools\Core\Message;
-use Vasoft\BxBackupTools\Core\Task;
 use Vasoft\BxBackupTools\Core\MessageContainer;
+use Vasoft\BxBackupTools\Core\Task;
 
-class ApplicationTest extends TestCase
+/**
+ * @internal
+ * @coversDefaultClass \Vasoft\BxBackupTools\Core\Application
+ */
+final class ApplicationTest extends TestCase
 {
     /**
-     * Все задачи оборачивают последнюю
-     * @return void
+     * Все задачи оборачивают последнюю.
      */
     public function testHandle(): void
     {
@@ -21,7 +25,7 @@ class ApplicationTest extends TestCase
                 new TestHandler(1),
                 new TestHandler(2),
                 new TestTask(),
-            ]
+            ],
         );
         $messages = new MessageContainer();
         $app->handle($messages);
@@ -45,10 +49,7 @@ class TestTask implements Task
 
 class TestHandler implements Task
 {
-
-    public function __construct(private readonly int $index)
-    {
-    }
+    public function __construct(private readonly int $index) {}
 
     public function handle(MessageContainer $message, ?Task $next = null): void
     {

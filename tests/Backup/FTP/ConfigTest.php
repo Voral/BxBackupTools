@@ -1,19 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Vasoft\BxBackupTools\Backup\FTP;
 
 use PHPUnit\Framework\TestCase;
 use Vasoft\BxBackupTools\Backup\Calculator\PathCalculator;
 
-class ConfigTest extends TestCase
+/**
+ * @internal
+ * @coversDefaultClass \Vasoft\BxBackupTools\Backup\FTP\Config
+ */
+final class ConfigTest extends TestCase
 {
-
     /**
      * При установке вычислителей пути, для инкрементного копирования, изменять должны только
-     * соответствующие значения
-     * @return void
+     * соответствующие значения.
      */
-    public function testSetCalculators()
+    public function testSetCalculators(): void
     {
         $calculatorRemote = new TestPathCalculator('remote');
         $calculatorLocal = new TestPathCalculator('local');
@@ -45,10 +49,8 @@ class ConfigTest extends TestCase
 class TestPathCalculator implements PathCalculator
 {
     public function __construct(
-        private readonly string $suffix
-    )
-    {
-    }
+        private readonly string $suffix,
+    ) {}
 
     public function getNext(string $path): string
     {
