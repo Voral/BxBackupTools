@@ -8,6 +8,7 @@ class DatabaseRestore
 {
     private ?bool $hasFullTextIndex = null;
     private false|\mysqli $connection;
+    /** @var false|resource */
     private $file;
 
     /**
@@ -39,8 +40,7 @@ class DatabaseRestore
             if (!($this->file = @fopen($fileName, 'rb'))) {
                 throw new RestoreException("Can't open file: " . $fileName);
             }
-            $eof = false;
-            while (($sql = $this->readSql()) !== '' && !$eof) {
+            while (($sql = $this->readSql()) !== '') {
                 $this->query($sql);
             }
             fclose($this->file);

@@ -36,6 +36,9 @@ abstract class Client implements Task
         $message->add(self::MODULE_ID, $this->getSuccessMessage());
     }
 
+    /**
+     * @param string[] $commands
+     */
     protected function fillSSLConfigCommand(array &$commands): void
     {
         if (strtoupper($this->config->getRemoteProtocol()) === 'FTP') {
@@ -65,6 +68,9 @@ abstract class Client implements Task
         );
     }
 
+    /**
+     * @return array<string>
+     */
     protected function getMirrorParams(): array
     {
         $result = [];
