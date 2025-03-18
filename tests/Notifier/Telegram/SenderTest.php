@@ -65,14 +65,6 @@ final class SenderTest extends TestCase
     }
 }
 
-class ComposerFileService
-{
-    public function fetchComposerJsonObject(string $composerJsonFilePath): ?object
-    {
-        return json_decode(file_get_contents($composerJsonFilePath, 1, 2));
-    }
-}
-
 class TelegramTestHandler implements Task
 {
     public function handle(MessageContainer $message, ?Task $next = null): void
