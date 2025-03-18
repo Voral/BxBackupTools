@@ -33,10 +33,10 @@ class DatabaseRestore
         clearstatcache();
         $this->onBegin($fileName);
         if (!file_exists($fileName)) {
-            throw new RestoreException("Can't open file: " . $fileName);
+            throw new RestoreException('File ' . $fileName . ' not found');
         }
         do {
-            if (!($this->file = fopen($fileName, 'rb'))) {
+            if (!($this->file = @fopen($fileName, 'rb'))) {
                 throw new RestoreException("Can't open file: " . $fileName);
             }
             $eof = false;

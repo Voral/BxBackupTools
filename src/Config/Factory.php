@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace Vasoft\BxBackupTools\Config;
 
-final class Factory
+class Factory
 {
     public function load(string $environment = 'local', string $path = ''): Container
     {
-        // @codeCoverageIgnoreStart
         if (empty($path)) {
             $path = $this->getRoot();
         }
-        /** @codeCoverageIgnoreEnd */
         $settings = $this->loadFile($path . 'config.php');
         $settingsLocal = $this->loadFile($path . 'config.' . $environment . '.php');
         if (!empty($settingsLocal)) {
@@ -22,9 +20,6 @@ final class Factory
         return new Container($settings);
     }
 
-    /**
-     * @codeCoverageIgnore
-     */
     public function getRoot(): string
     {
         $files = get_included_files();
