@@ -24,7 +24,8 @@
     "phpunit/phpunit": "^10.5",
     "php-mock/php-mock-phpunit": "^2.10",
     "phpstan/phpstan": "^2.1",
-    "phpstan/phpstan-phpunit": "^2.0"
+    "phpstan/phpstan-phpunit": "^2.0",
+    "voral/version-increment": "^1.0"
   },
   "scripts": {
     "upload": "php examples/upload.php",

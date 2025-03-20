@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ff59b84a4c5ce216d5cae92b0cd0c6aa",
+    "content-hash": "f3820f46c0b1eab89b8a248b2bc15bf3",
     "packages": [],
     "packages-dev": [
         {
@@ -5204,6 +5204,64 @@
             "time": "2024-09-08T18:53:08+00:00"
         },
         {
+            "name": "voral/version-increment",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Voral/vs-version-incrementor.git",
+                "reference": "aa9a781737b436fd5754173b3f912367d98a8264"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Voral/vs-version-incrementor/zipball/aa9a781737b436fd5754173b3f912367d98a8264",
+                "reference": "aa9a781737b436fd5754173b3f912367d98a8264",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.1"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.66.0",
+                "php-mock/php-mock-phpunit": "^2.10",
+                "phpstan/phpstan": "^2.1",
+                "phpstan/phpstan-phpunit": "^2.0",
+                "phpunit/phpunit": "^10.5"
+            },
+            "bin": [
+                "bin/vs-version-increment"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Vasoft\\VersionIncrement\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alexander Vorobyev",
+                    "email": "voral.adm@gmail.com"
+                }
+            ],
+            "description": "A tool for semantic versioning and changelog generation in Composer projects based on Git commits.",
+            "homepage": "https://github.com/Voral/vs-version-incrementor",
+            "keywords": [
+                "changelog",
+                "composer",
+                "git",
+                "semantic versioning",
+                "version increment"
+            ],
+            "support": {
+                "issues": "https://github.com/Voral/vs-version-incrementor/issues",
+                "source": "https://github.com/Voral/vs-version-incrementor"
+            },
+            "time": "2025-03-19T15:13:58+00:00"
+        },
+        {
             "name": "webmozart/assert",
             "version": "1.11.0",
             "source": {
@@ -5264,13 +5322,13 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
         "php": ">=8.1",
         "ext-mysqli": "*"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "platform-dev": {},
+    "plugin-api-version": "2.6.0"
 }
