@@ -27,6 +27,7 @@
     "voral/version-increment": "^1.0"
   },
   "scripts": {
+    "vi": "php ./vendor/bin/vs-version-increment",
     "upload": "php examples/upload.php",
     "download": "php examples/download.php",
     "test": "php vendor/bin/phpunit --display-warnings",

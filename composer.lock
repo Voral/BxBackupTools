@@ -4411,16 +4411,16 @@
         },
         {
             "name": "voral/version-increment",
-            "version": "1.0.1",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Voral/vs-version-incrementor.git",
-                "reference": "aa9a781737b436fd5754173b3f912367d98a8264"
+                "reference": "ad2734334a51ce275fdc4baa26024fb2f862acf4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Voral/vs-version-incrementor/zipball/aa9a781737b436fd5754173b3f912367d98a8264",
-                "reference": "aa9a781737b436fd5754173b3f912367d98a8264",
+                "url": "https://api.github.com/repos/Voral/vs-version-incrementor/zipball/ad2734334a51ce275fdc4baa26024fb2f862acf4",
+                "reference": "ad2734334a51ce275fdc4baa26024fb2f862acf4",
                 "shasum": ""
             },
             "require": {
@@ -4465,7 +4465,7 @@
                 "issues": "https://github.com/Voral/vs-version-incrementor/issues",
                 "source": "https://github.com/Voral/vs-version-incrementor"
             },
-            "time": "2025-03-19T15:13:58+00:00"
+            "time": "2025-03-20T05:43:05+00:00"
         }
     ],
     "aliases": [],
