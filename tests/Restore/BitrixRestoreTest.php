@@ -11,6 +11,7 @@ use Vasoft\BxBackupTools\Core\System;
 
 /**
  * @internal
+ *
  * @coversDefaultClass \Vasoft\BxBackupTools\Restore\BitrixRestore
  */
 final class BitrixRestoreTest extends TestCase
@@ -22,11 +23,11 @@ final class BitrixRestoreTest extends TestCase
     private string $bitrixDir = '';
     private string $bitrixInterfaceDir = '';
     /**
-     * @var MockObject|Config|(Config&MockObject)
+     * @var Config|(Config&MockObject)|MockObject
      */
     private null|Config|MockObject $configMock = null;
     /**
-     * @var MockObject|System|(System&MockObject)
+     * @var MockObject|(MockObject&System)|System
      */
     private null|\PHPUnit\Framework\MockObject\MockObject|System $systemMock = null;
 
@@ -98,7 +99,7 @@ final class BitrixRestoreTest extends TestCase
         $this->configMock->method('getDatabaseName')->willReturn('test_db');
         $this->configMock->method('getDatabaseUser')->willReturn('root');
         $this->configMock->method('getDatabasePassword')->willReturn('password');
-        if ($unavailablePath !== '') {
+        if ('' !== $unavailablePath) {
             $this->configMock->method('getArchivePath')->willReturnCallback(function () use ($unavailablePath) {
                 static $calls = 0;
 
@@ -133,12 +134,12 @@ final class BitrixRestoreTest extends TestCase
         try {
             $bitrixRestore->handle($messageContainer);
         } catch (\Throwable $e) {
-            $this->fail('An unexpected exception was thrown: ' . $e->getMessage());
+            self::fail('An unexpected exception was thrown: ' . $e->getMessage());
         }
 
         $messages = $messageContainer->getStringArray();
-        $this->assertNotEmpty($messages, 'Messages should be logged');
-        $this->assertEquals('Restore completed', end($messages), 'Last message should indicate successful restore');
+        self::assertNotEmpty($messages, 'Messages should be logged');
+        self::assertSame('Restore completed', end($messages), 'Last message should indicate successful restore');
     }
 
     public function testArchiveNotFound(): void
@@ -165,7 +166,7 @@ final class BitrixRestoreTest extends TestCase
         $messageContainer = new MessageContainer();
         $bitrixRestore = new BitrixRestore($this->systemMock, $this->configMock);
         $bitrixRestore->handle($messageContainer);
-        $this->assertEquals(sprintf($command, $this->archivePath, $this->archivePath), self::$lastCommand);
+        self::assertSame(sprintf($command, $this->archivePath, $this->archivePath), self::$lastCommand);
     }
 
     public function testExtendedLog(): void
@@ -175,19 +176,19 @@ final class BitrixRestoreTest extends TestCase
         $bitrixRestore = new BitrixRestore($this->systemMock, $this->configMock);
         $bitrixRestore->handle($messageContainer);
         $messages = $messageContainer->getStringArray();
-        $this->assertMatchesRegularExpression(
+        self::assertMatchesRegularExpression(
             '/^\[\d{2}:\d{2}:\d{2}\] Temporary directory cleaned$/',
             $messages[0],
         );
-        $this->assertMatchesRegularExpression(
+        self::assertMatchesRegularExpression(
             '/^\[\d{2}:\d{2}:\d{2}\] Unpacked backup$/',
             $messages[1],
         );
-        $this->assertMatchesRegularExpression(
+        self::assertMatchesRegularExpression(
             '/^\[\d{2}:\d{2}:\d{2}\] Filesystem synchronization completed$/',
             $messages[2],
         );
-        $this->assertEquals('Restore completed', $messages[3]);
+        self::assertSame('Restore completed', $messages[3]);
     }
 
     public function testRestoreDatabase(): void
@@ -203,10 +204,10 @@ final class BitrixRestoreTest extends TestCase
         $bitrixRestore = new BitrixRestore($this->systemMock, $this->configMock, $dbRestoreMock);
         $bitrixRestore->handle($messageContainer);
         $expected = $this->configMock->getArchivePath() . '/tmp/bitrix/backup/backup.sql';
-        $this->assertEquals($expected, $fileNameProperty, 'Wrong sql script filename.');
+        self::assertSame($expected, $fileNameProperty, 'Wrong sql script filename.');
 
         $messages = $messageContainer->getStringArray();
-        $this->assertMatchesRegularExpression('/^\[\d{2}:\d{2}:\d{2}\] Restored database backup$/', $messages[2]);
+        self::assertMatchesRegularExpression('/^\[\d{2}:\d{2}:\d{2}\] Restored database backup$/', $messages[2]);
     }
 
     public function testRestoreCreditsDbConnNotFound(): void
@@ -265,25 +266,25 @@ final class BitrixRestoreTest extends TestCase
         $bitrixRestore = new BitrixRestore($this->systemMock, $this->configMock);
         $bitrixRestore->handle($messageContainer);
         $content = file_get_contents($this->bitrixInterfaceDir . '/dbconn.php');
-        $this->assertEquals(
+        self::assertSame(
             '<' . "?\n\$DBHost = 'localhost';\n\$DBName = 'test_db';\n\$DBLogin = 'root';\n\$DBPassword = 'password';",
             $content,
             'Wrong dbconn.php',
         );
         $config = require $this->bitrixDir . '/.settings.php';
 
-        $this->assertEquals(
+        self::assertSame(
             'localhost',
             $config['connections']['value']['default']['host'],
             'Wrong .settings.php host',
         );
-        $this->assertEquals('root', $config['connections']['value']['default']['login'], 'Wrong .settings.php login');
-        $this->assertEquals(
+        self::assertSame('root', $config['connections']['value']['default']['login'], 'Wrong .settings.php login');
+        self::assertSame(
             'password',
             $config['connections']['value']['default']['password'],
             'Wrong .settings.php password',
         );
-        $this->assertEquals(
+        self::assertSame(
             'test_db',
             $config['connections']['value']['default']['database'],
             'Wrong .settings.php database',

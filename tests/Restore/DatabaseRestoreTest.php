@@ -63,6 +63,7 @@ function function_exists(string $functionName): bool
 
 /**
  * @internal
+ *
  * @coversDefaultClass \Vasoft\BxBackupTools\Restore\DatabaseRestore
  */
 final class DatabaseRestoreTest extends TestCase
@@ -132,7 +133,7 @@ final class DatabaseRestoreTest extends TestCase
         $processor->restore($this->testFileName);
         self::assertSame(1, self::$cacheCleanCount, 'Cache should be cleaned once');
         $queries = count(self::$sql);
-        self::assertEquals(6, $queries, 'Should be 6 SQL queries');
+        self::assertSame(6, $queries, 'Should be 6 SQL queries');
         self::assertSame(
             'SET FOREIGN_KEY_CHECKS = 0',
             self::$sql[0],

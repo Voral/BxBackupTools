@@ -18,6 +18,7 @@ if (!function_exists('\Vasoft\BxBackupTools\Backup\Calculator\date')) {
 
 /**
  * @internal
+ *
  * @coversDefaultClass \Vasoft\BxBackupTools\Backup\Calculator\WeeklyIncrementPrevious
  */
 final class WeeklyIncrementPreviousTest extends TestCase
@@ -43,6 +44,6 @@ final class WeeklyIncrementPreviousTest extends TestCase
         global $fakeTime;
         $fakeTime = $time;
         $calc = new WeeklyIncrementPrevious();
-        $this->assertSame($expected, $calc->getNext('/test/bkp'), $message);
+        self::assertSame($expected, $calc->getNext('/test/bkp'), $message);
     }
 }

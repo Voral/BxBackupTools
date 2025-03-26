@@ -16,6 +16,7 @@ function time(): int
 
 /**
  * @internal
+ *
  * @coversDefaultClass \Vasoft\BxBackupTools\Core\MessageContainer
  */
 final class MessageContainerTest extends TestCase
@@ -60,6 +61,6 @@ final class MessageContainerTest extends TestCase
         foreach ($messages as $module => $message) {
             $container->add($module, $message);
         }
-        $this->assertEquals($expected, $container->getStringArray());
+        self::assertSame($expected, $container->getStringArray());
     }
 }

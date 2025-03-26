@@ -27,6 +27,7 @@ use Vasoft\BxBackupTools\Core\Task;
 
 /**
  * @internal
+ *
  * @coversDefaultClass \Vasoft\BxBackupTools\Notifier\Telegram\Sender
  */
 final class SenderTest extends TestCase

@@ -9,6 +9,7 @@ use Vasoft\BxBackupTools\Backup\Calculator\PathCalculator;
 
 /**
  * @internal
+ *
  * @coversDefaultClass \Vasoft\BxBackupTools\Backup\FTP\Config
  */
 final class ConfigTest extends TestCase

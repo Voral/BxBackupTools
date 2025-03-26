@@ -11,6 +11,7 @@ use Vasoft\BxBackupTools\Core\Task;
 
 /**
  * @internal
+ *
  * @coversDefaultClass \Vasoft\BxBackupTools\Tasks\Timer
  */
 final class TimerTest extends TestCase
@@ -27,6 +28,7 @@ final class TimerTest extends TestCase
 
     /**
      * Должен вычислять время в секундах только в последующих задачах и добавлять информацию в сообщение.
+     *
      * @dataProvider provideHandleCases
      */
     public function testHandle(int $time): void
@@ -40,7 +42,7 @@ final class TimerTest extends TestCase
         );
         $messages = new MessageContainer();
         $app->handle($messages);
-        $this->assertEquals(
+        self::assertSame(
             [sprintf('Execution time: %d sec', $time)],
             $messages->getStringArray(),
         );

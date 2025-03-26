@@ -11,6 +11,7 @@ use Vasoft\BxBackupTools\Core\Task;
 
 /**
  * @internal
+ *
  * @coversDefaultClass \Vasoft\BxBackupTools\Core\Application
  */
 final class ApplicationTest extends TestCase
@@ -29,7 +30,7 @@ final class ApplicationTest extends TestCase
         );
         $messages = new MessageContainer();
         $app->handle($messages);
-        $this->assertEquals([
+        self::assertSame([
             'Task 1 before',
             'Task 2 before',
             'Last task executed',

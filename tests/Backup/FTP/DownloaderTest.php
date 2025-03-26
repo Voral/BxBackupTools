@@ -10,6 +10,7 @@ use Vasoft\BxBackupTools\Core\System;
 
 /**
  * @internal
+ *
  * @coversDefaultClass \Vasoft\BxBackupTools\Backup\FTP\Downloader
  */
 final class DownloaderTest extends TestCase
@@ -68,6 +69,7 @@ final class DownloaderTest extends TestCase
     /**
      * @throws Exception
      * @throws \PHPUnit\Framework\MockObject\Exception
+     *
      * @dataProvider provideConfigRelationsCases
      */
     public function testConfigRelations(array $modifier, string $expected, string $message): void
@@ -75,7 +77,7 @@ final class DownloaderTest extends TestCase
         $settings = array_replace_recursive($this->getDefaultConfig(), $modifier);
         $config = new Config($settings);
         $commandValue = '';
-        $cmd = $this->createStub(System::class);
+        $cmd = self::createStub(System::class);
         $cmd->method('exec')
             ->willReturnCallback(static function (string $command, &$output, &$resultCode) use (&$commandValue) {
                 $output = '';
@@ -83,12 +85,11 @@ final class DownloaderTest extends TestCase
                 $commandValue = $command;
 
                 return '';
-            })
-        ;
+            });
         $client = new Downloader($cmd, $config);
         $messages = new MessageContainer();
         $client->handle($messages);
-        $this->assertSame($expected, $commandValue, $message);
+        self::assertSame($expected, $commandValue, $message);
     }
 
     /**
@@ -98,7 +99,7 @@ final class DownloaderTest extends TestCase
     public function testDownloadSuccess(): void
     {
         $config = new Config($this->getDefaultConfig());
-        $cmd = $this->createStub(System::class);
+        $cmd = self::createStub(System::class);
         $cmd->method('exec')
             ->willReturn('')
             ->willReturnCallback(static function (string $command, &$output, &$resultCode) {
@@ -106,12 +107,11 @@ final class DownloaderTest extends TestCase
                 $resultCode = 0;
 
                 return '';
-            })
-        ;
+            });
         $client = new Downloader($cmd, $config);
         $messages = new MessageContainer();
         $client->handle($messages);
-        $this->assertSame(['Backup download completed'], $messages->getStringArray());
+        self::assertSame(['Backup download completed'], $messages->getStringArray());
     }
 
     /**
@@ -121,7 +121,7 @@ final class DownloaderTest extends TestCase
     public function testDownloadError(): void
     {
         $config = new Config($this->getDefaultConfig());
-        $cmd = $this->createStub(System::class);
+        $cmd = self::createStub(System::class);
         $cmd->method('exec')
             ->willReturn('')
             ->willReturnCallback(static function (string $command, &$output, &$resultCode) {
@@ -129,8 +129,7 @@ final class DownloaderTest extends TestCase
                 $resultCode = 1;
 
                 return '';
-            })
-        ;
+            });
         $client = new Downloader($cmd, $config);
         $messages = new MessageContainer();
         $this->expectException(Exception::class);
@@ -139,7 +138,7 @@ final class DownloaderTest extends TestCase
         try {
             $client->handle($messages);
         } catch (Exception $e) {
-            $this->assertSame(['Test error message'], $e->data);
+            self::assertSame(['Test error message'], $e->data);
 
             throw $e;
         }

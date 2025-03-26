@@ -27,6 +27,7 @@ class DatabaseRestore
 
     /**
      * @param string $fileName Путь к файлу дампа базы данных
+     *
      * @throws RestoreException Если произошла ошибка при восстановлении базы данных
      */
     public function restore(string $fileName): void
@@ -37,7 +38,7 @@ class DatabaseRestore
             throw new RestoreException('File ' . $fileName . ' not found');
         }
         do {
-            if (!($this->file = @fopen($fileName, 'rb'))) {
+            if (!($this->file = @fopen($fileName, 'r'))) {
                 throw new RestoreException("Can't open file: " . $fileName);
             }
             while (($sql = $this->readSql()) !== '') {
@@ -71,7 +72,7 @@ class DatabaseRestore
             $arSql = explode(';', file_get_contents($sqlAfterConnectFile));
             foreach ($arSql as $sql) {
                 $sql = trim(str_replace('<DATABASE>', $this->databaseName, $sql));
-                if ($sql !== '') {
+                if ('' !== $sql) {
                     $this->query($sql);
                 }
             }
@@ -94,7 +95,7 @@ class DatabaseRestore
         $sqlCleaned = $this->processFullTextKey($sql);
         $rs = mysqli_query($this->connection, $sqlCleaned);
         if (!$rs || mysqli_errno($this->connection)) {
-            if ($this->hasFullTextIndex === null && preg_match('#^CREATE TABLE.*FULLTEXT KEY#ms', $sql)) {
+            if (null === $this->hasFullTextIndex && preg_match('#^CREATE TABLE.*FULLTEXT KEY#ms', $sql)) {
                 $this->hasFullTextIndex = false;
 
                 return $this->query($sql);
@@ -108,7 +109,7 @@ class DatabaseRestore
 
     private function processFullTextKey(string $sql): string
     {
-        if ($this->hasFullTextIndex === false && preg_match('#^CREATE TABLE.*FULLTEXT KEY#ms', $sql)) {
+        if (false === $this->hasFullTextIndex && preg_match('#^CREATE TABLE.*FULLTEXT KEY#ms', $sql)) {
             $sql = preg_replace("#[\r\n\\s]*FULLTEXT KEY[^\r\n]*[\r\n]*#m", '', $sql);
             $sql = str_replace('),)', '))', $sql);
         }
@@ -121,8 +122,8 @@ class DatabaseRestore
         $sql = '';
         while (!str_ends_with(trim($sql), ';')) {
             $line = fgets($this->file);
-            if (feof($this->file) || $line === false) {
-                if ($line !== false) {
+            if (feof($this->file) || false === $line) {
+                if (false !== $line) {
                     $sql .= $line;
                 }
 

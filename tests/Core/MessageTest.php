@@ -15,6 +15,7 @@ use Vasoft\BxBackupTools\Core\MessageContainer;
 
 /**
  * @internal
+ *
  * @coversDefaultClass \Vasoft\BxBackupTools\Core\Message
  */
 final class MessageTest extends TestCase
@@ -34,7 +35,7 @@ final class MessageTest extends TestCase
     {
         $message = new MessageContainer();
         $message->add($module, $messages);
-        $this->assertEquals($expected, $message->getStringArray());
+        self::assertSame($expected, $message->getStringArray());
     }
 
     /**
@@ -44,7 +45,7 @@ final class MessageTest extends TestCase
     {
         $message = new MessageContainer();
         $message->add($module, $messages);
-        $this->assertEquals($expected, $message->getStringArray());
+        self::assertSame($expected, $message->getStringArray());
     }
 
     public function testAddDifferentModules(): void
@@ -54,7 +55,7 @@ final class MessageTest extends TestCase
         $message->add('module2', ['String 2 1', 'String 2 2']);
         $message->add('module1', 'String 2 1');
         $message->add('module1', 'String 1 1');
-        $this->assertEquals([
+        self::assertSame([
             'String 1 1',
             'String 1 2',
             'String 2 1',

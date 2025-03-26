@@ -215,7 +215,7 @@ final class BitrixRestore implements Task
     {
         $result = $output = null;
         $this->cmd->exec($command, $output, $result);
-        if ($result !== 0) {
+        if (0 !== $result) {
             if (empty($output)) {
                 $errors = [$errorMessage];
             } else {
@@ -233,13 +233,13 @@ final class BitrixRestore implements Task
     {
         $fileName = $this->findNewestFile();
         $fileNameParts = explode('.', $fileName);
-        if (end($fileNameParts) === 'gz') {
+        if ('gz' === end($fileNameParts)) {
             $this->zipped = true;
             array_pop($fileNameParts);
         } else {
             $this->zipped = false;
         }
-        if (end($fileNameParts) === 'enc') {
+        if ('enc' === end($fileNameParts)) {
             $this->encoded = true;
         } else {
             $this->encoded = false;

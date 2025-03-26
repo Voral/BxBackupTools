@@ -27,7 +27,7 @@ final class Sender implements Task
             'chat_id' => $this->config->getChatId(),
             'text' => $message,
         ];
-        /** @todo анализ ответа */
+        // @todo анализ ответа
         file_get_contents(
             $url,
             false,

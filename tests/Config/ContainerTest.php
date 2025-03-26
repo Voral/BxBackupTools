@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
+ *
  * @coversDefaultClass \Vasoft\BxBackupTools\Config\Container
  */
 final class ContainerTest extends TestCase
@@ -63,7 +64,7 @@ final class ContainerTest extends TestCase
     private function getContainer(): Container
     {
         static $container = null;
-        if ($container === null) {
+        if (null === $container) {
             $container = new Container([
                 TestContainerConfig1::CODE => ['key1' => 'value1'],
                 TestContainerConfig2::CODE => ['key2' => 'value2'],

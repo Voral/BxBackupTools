@@ -30,7 +30,7 @@ abstract class Client implements Task
         $command = sprintf('lftp -c "%s" 2>&1', implode(';', $commands));
         $output = $return = null;
         $this->cmd->exec($command, $output, $return);
-        if ($return !== 0) {
+        if (0 !== $return) {
             throw new Exception($this->getErrorMessage(), $output ?? '');
         }
         $message->add(self::MODULE_ID, $this->getSuccessMessage());
@@ -41,7 +41,7 @@ abstract class Client implements Task
      */
     protected function fillSSLConfigCommand(array &$commands): void
     {
-        if (strtoupper($this->config->getRemoteProtocol()) === 'FTP') {
+        if ('FTP' === strtoupper($this->config->getRemoteProtocol())) {
             $commands[] = 'set ftp:ssl-allow true';
             $commands[] = 'set ssl:verify-certificate no';
         }

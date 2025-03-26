@@ -24,7 +24,7 @@ final class MessageContainer
     {
         return array_reduce($this->messages, function (array $carry, Message $item) {
             $data = is_array($item->data) ? $item->data : [$item->data];
-            if ($this->timeFormat !== '') {
+            if ('' !== $this->timeFormat) {
                 $data[0] = date($this->timeFormat, $item->time) . ' ' . $data[0];
             }
 

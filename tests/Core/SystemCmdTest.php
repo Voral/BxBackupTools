@@ -19,6 +19,7 @@ function exec(string $command, &$output, &$result_code): false|string
 
 /**
  * @internal
+ *
  * @coversDefaultClass \Vasoft\BxBackupTools\Core\SystemCmd
  */
 final class SystemCmdTest extends TestCase
@@ -35,9 +36,9 @@ final class SystemCmdTest extends TestCase
         $output = $resultCode = null;
         $cmd = new SystemCmd();
         $cmd->exec('ls -la', $output, $resultCode);
-        $this->assertEquals('ls -la', $lastCommand);
-        $this->assertEquals(1, $execCount);
-        $this->assertEquals('Output Changed', $output);
-        $this->assertEquals('Result Code Changed', $resultCode);
+        self::assertSame('ls -la', $lastCommand);
+        self::assertSame(1, $execCount);
+        self::assertSame('Output Changed', $output);
+        self::assertSame('Result Code Changed', $resultCode);
     }
 }

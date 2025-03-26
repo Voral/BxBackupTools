@@ -10,6 +10,7 @@ use Vasoft\BxBackupTools\Core\Task;
 
 /**
  * @internal
+ *
  * @coversDefaultClass \Vasoft\BxBackupTools\Notifier\Console\Sender
  */
 final class SenderTest extends TestCase
@@ -21,8 +22,8 @@ final class SenderTest extends TestCase
         ob_start();
         $sender->handle($message, new TestHandler());
         $content = ob_get_clean();
-        $this->assertEquals('executed' . PHP_EOL . 'two lines' . PHP_EOL, $content, 'Wrong output');
-        $this->assertEquals(['executed', 'two lines'], $message->getStringArray(), 'Message modified');
+        self::assertSame('executed' . PHP_EOL . 'two lines' . PHP_EOL, $content, 'Wrong output');
+        self::assertSame(['executed', 'two lines'], $message->getStringArray(), 'Message modified');
     }
 }
 

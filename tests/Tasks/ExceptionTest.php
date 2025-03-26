@@ -12,6 +12,7 @@ use Vasoft\BxBackupTools\Core\Task;
 
 /**
  * @internal
+ *
  * @coversDefaultClass \Vasoft\BxBackupTools\Tasks\Exception
  */
 final class ExceptionTest extends TestCase
@@ -58,7 +59,7 @@ final class ExceptionTest extends TestCase
         );
         $messages = new MessageContainer();
         $app->handle($messages);
-        $this->assertSame(
+        self::assertSame(
             [
                 'Task 1 Begin',
                 'Task 2 Begin',
@@ -73,6 +74,7 @@ final class ExceptionTest extends TestCase
 
     /**
      * Если в ходе выполнения задач возникает ошибка, унаследованная от ProcessException, обрабатывает и добавляет информацию об ошибке в сообщение. Дополнительные данные ошибки принимает как строку так и массив.
+     *
      * @dataProvider provideHandleProcessErrorCases
      */
     public function testHandleProcessError(array|string $exceptionData, array $expected): void
@@ -87,7 +89,7 @@ final class ExceptionTest extends TestCase
         );
         $messages = new MessageContainer();
         $app->handle($messages);
-        $this->assertSame($expected, $messages->getStringArray());
+        self::assertSame($expected, $messages->getStringArray());
     }
 
     /**

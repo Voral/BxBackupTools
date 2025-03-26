@@ -10,6 +10,7 @@ use Vasoft\BxBackupTools\Backup\FTP\Config;
 
 /**
  * @internal
+ *
  * @coversDefaultClass \Vasoft\BxBackupTools\Config\Factory
  */
 final class FactoryTest extends TestCase
@@ -53,12 +54,10 @@ final class FactoryTest extends TestCase
     {
         $factory = $this->getMockBuilder(Factory::class)
             ->onlyMethods(['getRoot'])
-            ->getMock()
-        ;
-        $factory->expects($this->once())
+            ->getMock();
+        $factory->expects(self::once())
             ->method('getRoot')
-            ->willReturn('/mocked/path/')
-        ;
+            ->willReturn('/mocked/path/');
 
         $factory->load();
     }
@@ -67,22 +66,19 @@ final class FactoryTest extends TestCase
     {
         $factory = $this->getMockBuilder(Factory::class)
             ->onlyMethods(['getRoot'])
-            ->getMock()
-        ;
-        $factory->expects($this->never())
-            ->method('getRoot')
-        ;
+            ->getMock();
+        $factory->expects(self::never())
+            ->method('getRoot');
         $factory->load(path: '/expected/path/');
     }
 
     public function testGetRootReturnsCorrectPath(): void
     {
         $getIncludedFiles = $this->getFunctionMock(__NAMESPACE__, 'get_included_files');
-        $getIncludedFiles->expects($this->once())
-            ->willReturn(['/path/to/file.php'])
-        ;
+        $getIncludedFiles->expects(self::once())
+            ->willReturn(['/path/to/file.php']);
         $factory = new Factory();
         $root = $factory->getRoot();
-        $this->assertEquals('/path/to/', $root);
+        self::assertSame('/path/to/', $root);
     }
 }
