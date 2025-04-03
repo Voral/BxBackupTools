@@ -2,7 +2,9 @@
 /**
  * Пример использования пакета для скачивания бекапов Битрикс и развертывания их на сервере. Отправка сообщений в Telegram.
  */
-include_once './vendor/autoload.php';
+include_once  './vendor/autoload.php';
+/** Если используете этот скрипт в качестве шаблона - удалите строку выше и раскомментируйте строку ниже */
+// include_once __DIR__ . '/vendor/autoload.php';
 
 use Vasoft\BxBackupTools\Backup\Calculator;
 use Vasoft\BxBackupTools\Backup\FTP;
