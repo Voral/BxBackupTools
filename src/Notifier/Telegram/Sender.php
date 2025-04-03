@@ -43,6 +43,10 @@ final class Sender implements Task
 
     private function render($messageStrings): string
     {
+        if ('' !== $this->config->getTitle()) {
+            array_unshift($messageStrings, $this->config->getTitle());
+        }
+
         $message = implode("\r\n", $messageStrings);
         $message = preg_replace('#<br\s*/?>#i', "\r\n", $message);
 

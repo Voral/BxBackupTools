@@ -22,4 +22,9 @@ final class Config extends BaseConfig
     {
         return (string) ($this->settings['chatId'] ?? '');
     }
+
+    public function getTitle(): string
+    {
+        return (string) ($this->settings['title'] ?? '');
+    }
 }
