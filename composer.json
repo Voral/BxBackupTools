@@ -27,6 +27,8 @@
         "voral/version-increment": "^1.0"
     },
     "scripts": {
+        "vi:debug": "php ./vendor/bin/vs-version-increment --debug",
+        "vi:list": "php ./vendor/bin/vs-version-increment --list",
         "vi": "php ./vendor/bin/vs-version-increment",
         "upload": "php examples/upload.php",
         "download": "php examples/download.php",
