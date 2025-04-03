@@ -15,6 +15,32 @@ use Vasoft\BxBackupTools\Core\System;
  */
 final class UploaderTest extends TestCase
 {
+    /**
+     * @throws Exception
+     * @throws \PHPUnit\Framework\MockObject\Exception
+     *
+     * @dataProvider provideConfigRelationsCases
+     */
+    public function testConfigRelations(array $modifier, string $expected, string $message): void
+    {
+        $settings = array_replace_recursive($this->getDefaultConfig(), $modifier);
+        $config = new Config($settings);
+        $commandValue = '';
+        $cmd = self::createStub(System::class);
+        $cmd->method('exec')
+            ->willReturnCallback(static function (string $command, &$output, &$resultCode) use (&$commandValue) {
+                $output = '';
+                $resultCode = 0;
+                $commandValue = $command;
+
+                return '';
+            });
+        $client = new Uploader($cmd, $config);
+        $messages = new MessageContainer();
+        $client->handle($messages);
+        self::assertSame($expected, $commandValue, $message);
+    }
+
     public static function provideConfigRelationsCases(): iterable
     {
         return [
@@ -64,32 +90,6 @@ final class UploaderTest extends TestCase
                 'Remote Host',
             ],
         ];
-    }
-
-    /**
-     * @throws Exception
-     * @throws \PHPUnit\Framework\MockObject\Exception
-     *
-     * @dataProvider provideConfigRelationsCases
-     */
-    public function testConfigRelations(array $modifier, string $expected, string $message): void
-    {
-        $settings = array_replace_recursive($this->getDefaultConfig(), $modifier);
-        $config = new Config($settings);
-        $commandValue = '';
-        $cmd = self::createStub(System::class);
-        $cmd->method('exec')
-            ->willReturnCallback(static function (string $command, &$output, &$resultCode) use (&$commandValue) {
-                $output = '';
-                $resultCode = 0;
-                $commandValue = $command;
-
-                return '';
-            });
-        $client = new Uploader($cmd, $config);
-        $messages = new MessageContainer();
-        $client->handle($messages);
-        self::assertSame($expected, $commandValue, $message);
     }
 
     /**

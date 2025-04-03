@@ -23,6 +23,17 @@ if (!function_exists('\Vasoft\BxBackupTools\Backup\Calculator\date')) {
  */
 final class WeeklyIncrementTest extends TestCase
 {
+    /**
+     * @dataProvider provideGetNextCases
+     */
+    public function testGetNext(int $time, string $expected, string $message): void
+    {
+        global $fakeTime;
+        $fakeTime = $time;
+        $calc = new WeeklyIncrement();
+        self::assertSame($expected, $calc->getNext('/test'), $message);
+    }
+
     public static function provideGetNextCases(): iterable
     {
         return [
@@ -34,16 +45,5 @@ final class WeeklyIncrementTest extends TestCase
             [mktime(0, 0, 0, 1, 25, 2025), '/test6', 'Saturday'],
             [mktime(0, 0, 0, 1, 26, 2025), '/test0', 'Sunday'],
         ];
-    }
-
-    /**
-     * @dataProvider provideGetNextCases
-     */
-    public function testGetNext(int $time, string $expected, string $message): void
-    {
-        global $fakeTime;
-        $fakeTime = $time;
-        $calc = new WeeklyIncrement();
-        self::assertSame($expected, $calc->getNext('/test'), $message);
     }
 }

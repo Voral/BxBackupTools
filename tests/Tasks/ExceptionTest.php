@@ -17,33 +17,6 @@ use Vasoft\BxBackupTools\Core\Task;
  */
 final class ExceptionTest extends TestCase
 {
-    public static function provideHandleProcessErrorCases(): iterable
-    {
-        return [
-            [
-                ['error string 1', 'error string 2'],
-                [
-                    'Task 1 Begin',
-                    'Task 2 Begin',
-                    'Process Error',
-                    'error string 1',
-                    'error string 2',
-                    'Task 1 End',
-                ],
-            ],
-            [
-                'error string 1',
-                [
-                    'Task 1 Begin',
-                    'Task 2 Begin',
-                    'Process Error',
-                    'error string 1',
-                    'Task 1 End',
-                ],
-            ],
-        ];
-    }
-
     /**
      * Если в ходе выполнения задач не возникло ошибок, не должен ни чего добавлять в сообщение.
      */
@@ -90,6 +63,33 @@ final class ExceptionTest extends TestCase
         $messages = new MessageContainer();
         $app->handle($messages);
         self::assertSame($expected, $messages->getStringArray());
+    }
+
+    public static function provideHandleProcessErrorCases(): iterable
+    {
+        return [
+            [
+                ['error string 1', 'error string 2'],
+                [
+                    'Task 1 Begin',
+                    'Task 2 Begin',
+                    'Process Error',
+                    'error string 1',
+                    'error string 2',
+                    'Task 1 End',
+                ],
+            ],
+            [
+                'error string 1',
+                [
+                    'Task 1 Begin',
+                    'Task 2 Begin',
+                    'Process Error',
+                    'error string 1',
+                    'Task 1 End',
+                ],
+            ],
+        ];
     }
 
     /**

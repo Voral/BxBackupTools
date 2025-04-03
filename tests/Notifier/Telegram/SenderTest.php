@@ -64,6 +64,38 @@ final class SenderTest extends TestCase
             self::$sentData,
         );
     }
+
+    public function testHandleTitle(): void
+    {
+        self::$sentData = null;
+        $test = new Sender(
+            new Config([
+                'token' => 'tokenTest',
+                'chatId' => '12123',
+                'title' => 'Some Title',
+            ]),
+        );
+        $test->handle(new MessageContainer(), new TelegramTestHandler());
+        self::assertSame(
+            [
+                'url' => 'https://api.telegram.org/bottokenTest/sendMessage',
+                'additional' => false,
+                'context' => [
+                    'stream_options' => [
+                        'http' => [
+                            'method' => 'POST',
+                            'header' => 'Content-type: application/json',
+                            'content' => '{"chat_id":"12123","text":"Some Title\r\nexecuted\r\ntwo lines"}',
+                        ],
+
+                    ],
+
+                    'params' => null,
+                ],
+            ],
+            self::$sentData,
+        );
+    }
 }
 
 class TelegramTestHandler implements Task

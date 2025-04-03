@@ -16,16 +16,6 @@ use Vasoft\BxBackupTools\Core\Task;
  */
 final class TimerTest extends TestCase
 {
-    public static function provideHandleCases(): iterable
-    {
-        return [
-            [
-                1,
-                3,
-            ],
-        ];
-    }
-
     /**
      * Должен вычислять время в секундах только в последующих задачах и добавлять информацию в сообщение.
      *
@@ -46,6 +36,16 @@ final class TimerTest extends TestCase
             [sprintf('Execution time: %d sec', $time)],
             $messages->getStringArray(),
         );
+    }
+
+    public static function provideHandleCases(): iterable
+    {
+        return [
+            [
+                1,
+                3,
+            ],
+        ];
     }
 }
 

@@ -64,22 +64,6 @@ final class BitrixRestoreTest extends TestCase
         rmdir($this->tempDir);
     }
 
-    public static function provideCanFindAllExtensionsCases(): iterable
-    {
-        return [
-            ['archive.tar', 'cat `ls -1v %s/archive.tar*` | tar xf - -C %s/tmp 2>&1'],
-            ['archive.tar.gz', 'cat `ls -1v %s/archive.tar.*` | tar xzf - -C %s/tmp 2>&1'],
-            [
-                'archive.enc',
-                "cat `ls -1v %s/archive.enc*` | tail -c +513 | openssl aes-256-ecb -d -in - -out - -K '6434316438636439386630306232303465393830303939386563663834323765' -nosalt -nopad | tar xf - -C %s/tmp 2>&1",
-            ],
-            [
-                'archive.enc.gz',
-                "cat `ls -1v %s/archive.enc.*` | gunzip | tail -c +513 | openssl aes-256-ecb -d -in - -out - -K '6434316438636439386630306232303465393830303939386563663834323765' -nosalt -nopad | tar xf - -C %s/tmp 2>&1",
-            ],
-        ];
-    }
-
     public function initMock(
         string $unavailablePath = '',
         bool $isLoggingEnabled = false,
@@ -167,6 +151,22 @@ final class BitrixRestoreTest extends TestCase
         $bitrixRestore = new BitrixRestore($this->systemMock, $this->configMock);
         $bitrixRestore->handle($messageContainer);
         self::assertSame(sprintf($command, $this->archivePath, $this->archivePath), self::$lastCommand);
+    }
+
+    public static function provideCanFindAllExtensionsCases(): iterable
+    {
+        return [
+            ['archive.tar', 'cat `ls -1v %s/archive.tar*` | tar xf - -C %s/tmp 2>&1'],
+            ['archive.tar.gz', 'cat `ls -1v %s/archive.tar.*` | tar xzf - -C %s/tmp 2>&1'],
+            [
+                'archive.enc',
+                "cat `ls -1v %s/archive.enc*` | tail -c +513 | openssl aes-256-ecb -d -in - -out - -K '6434316438636439386630306232303465393830303939386563663834323765' -nosalt -nopad | tar xf - -C %s/tmp 2>&1",
+            ],
+            [
+                'archive.enc.gz',
+                "cat `ls -1v %s/archive.enc.*` | gunzip | tail -c +513 | openssl aes-256-ecb -d -in - -out - -K '6434316438636439386630306232303465393830303939386563663834323765' -nosalt -nopad | tar xf - -C %s/tmp 2>&1",
+            ],
+        ];
     }
 
     public function testExtendedLog(): void

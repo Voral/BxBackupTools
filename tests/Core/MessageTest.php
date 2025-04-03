@@ -1,12 +1,6 @@
 <?php
 
 declare(strict_types=1);
-/**
- * @see https://phpunit-documentation-russian.readthedocs.io/ru/latest/
- * php -dzend_extension=xdebug.so -dxdebug.mode=coverage vendor/bin/phpunit --coverage-php .phpunit.coverage.php
- * php -dzend_extension=xdebug.so -dxdebug.mode=coverage vendor/bin/phpunit --coverage-text
- * @see https://habr.com/ru/companies/plesk/articles/552998/
- */
 
 namespace Core;
 
@@ -20,14 +14,6 @@ use Vasoft\BxBackupTools\Core\MessageContainer;
  */
 final class MessageTest extends TestCase
 {
-    public static function dataTestAdd(): iterable
-    {
-        return [
-            ['example1', 'Single string', ['Single string']],
-            ['example2', ['Single string1', 'Single string2'], ['Single string1', 'Single string2']],
-        ];
-    }
-
     /**
      * @dataProvider dataTestAdd
      */
@@ -46,6 +32,14 @@ final class MessageTest extends TestCase
         $message = new MessageContainer();
         $message->add($module, $messages);
         self::assertSame($expected, $message->getStringArray());
+    }
+
+    public static function dataTestAdd(): iterable
+    {
+        return [
+            ['example1', 'Single string', ['Single string']],
+            ['example2', ['Single string1', 'Single string2'], ['Single string1', 'Single string2']],
+        ];
     }
 
     public function testAddDifferentModules(): void

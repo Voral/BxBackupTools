@@ -21,6 +21,20 @@ function time(): int
  */
 final class MessageContainerTest extends TestCase
 {
+    /**
+     * @dataProvider provideGetStringArrayCases
+     */
+    public function testGetStringArray(string $template, array $messages, array $expected): void
+    {
+        global $index;
+        $index = 0;
+        $container = new MessageContainer($template);
+        foreach ($messages as $module => $message) {
+            $container->add($module, $message);
+        }
+        self::assertSame($expected, $container->getStringArray());
+    }
+
     public static function provideGetStringArrayCases(): iterable
     {
         $messages = [
@@ -48,19 +62,5 @@ final class MessageContainerTest extends TestCase
                 ],
             ],
         ];
-    }
-
-    /**
-     * @dataProvider provideGetStringArrayCases
-     */
-    public function testGetStringArray(string $template, array $messages, array $expected): void
-    {
-        global $index;
-        $index = 0;
-        $container = new MessageContainer($template);
-        foreach ($messages as $module => $message) {
-            $container->add($module, $message);
-        }
-        self::assertSame($expected, $container->getStringArray());
     }
 }
