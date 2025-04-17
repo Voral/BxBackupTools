@@ -11,6 +11,7 @@ use Vasoft\BxBackupTools\Backup\FTP;
 use Vasoft\BxBackupTools\Core\Application;
 use Vasoft\BxBackupTools\Core\MessageContainer;
 use Vasoft\BxBackupTools\Core\SystemCmd;
+use Vasoft\BxBackupTools\Informer\DiskSpace;
 use Vasoft\BxBackupTools\Notifier\Telegram;
 use Vasoft\BxBackupTools\Tasks\Timer;
 use Vasoft\BxBackupTools\Core\Task;
@@ -47,8 +48,9 @@ $app = new Application([
     new Sender(),
 //    new Telegram\Sender($configSender),  // отправка сообщения о результатах выполнения скрипта
     new Exception(), // обработка исключений
+    new DiskSpace(__DIR__, 0), // проверка свободного места на диске
     new Timer(), // Таймер вычисляющий время выполнения скрипта
-//    new FTP\Uploader($cmd, $configBackup), // Загрузка архива на сервер
+    new FTP\Uploader($cmd, $configBackup), // Загрузка архива на сервер
 ]);
 // Запускаем выполнение скрипта
 $app->handle(new MessageContainer());

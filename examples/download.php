@@ -13,6 +13,7 @@ use Vasoft\BxBackupTools\Config\Factory;
 use Vasoft\BxBackupTools\Core\Application;
 use Vasoft\BxBackupTools\Core\MessageContainer;
 use Vasoft\BxBackupTools\Core\SystemCmd;
+use Vasoft\BxBackupTools\Informer\DiskSpace;
 use Vasoft\BxBackupTools\Tasks\Timer;
 
 use Vasoft\BxBackupTools\Notifier\Telegram;
@@ -49,6 +50,7 @@ $cmd = new SystemCmd();
 $app = new Application([
     new Telegram\Sender($configSender), // отправка сообщения о результатах выполнения скрипта
     new \Vasoft\BxBackupTools\Tasks\Exception(), // обработка исключений
+    new DiskSpace(__DIR__, 0), // проверка свободного места на диске
     new Timer(), // Таймер вычисляющий время выполнения скрипта
     new BitrixRestore($cmd, $configRestore), // развертывание скачанного архива
     new Downloader($cmd, $configBackup), // скачивание архива с сервера
