@@ -24,7 +24,7 @@
         "php-mock/php-mock-phpunit": "^2.10",
         "phpstan/phpstan": "^2.1",
         "phpstan/phpstan-phpunit": "^2.0",
-        "voral/version-increment": "^1.0"
+        "voral/version-increment": "^2.0"
     },
     "scripts": {
         "vi:debug": "php ./vendor/bin/vs-version-increment --debug",
