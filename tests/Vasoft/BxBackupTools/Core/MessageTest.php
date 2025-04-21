@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Core;
+namespace Vasoft\BxBackupTools\Core;
 
 use PHPUnit\Framework\TestCase;
-use Vasoft\BxBackupTools\Core\MessageContainer;
 
 /**
  * @internal

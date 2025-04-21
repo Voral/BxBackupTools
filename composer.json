@@ -32,7 +32,7 @@
         "vi": "php ./vendor/bin/vs-version-increment",
         "upload": "php examples/upload.php",
         "download": "php examples/download.php",
-        "test": "php vendor/bin/phpunit --display-warnings --filter=testShow",
+        "test": "php vendor/bin/phpunit --display-warnings",
         "coverage": "php -dzend_extension=xdebug.so -dxdebug.mode=coverage vendor/bin/phpunit --coverage-text",
         "stan": "vendor/bin/phpstan analyse src tests",
         "fixer": "vendor/bin/php-cs-fixer fix --dry-run --diff",

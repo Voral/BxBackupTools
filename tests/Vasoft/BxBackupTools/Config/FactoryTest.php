@@ -20,7 +20,7 @@ final class FactoryTest extends TestCase
     public function testLoadDefault(): void
     {
         $factory = new Factory();
-        $container = $factory->load(path: realpath(__DIR__ . '/../fakes/') . '/');
+        $container = $factory->load(path: realpath(__DIR__ . '/../../../fakes/') . '/');
         /** @var Config $config */
         $config = $container->get(Config::class);
         self::assertSame('192.168.1.1', $config->getRemoteHost(), 'Not replace value from distribution');
@@ -31,7 +31,7 @@ final class FactoryTest extends TestCase
     public function testLoadOther(): void
     {
         $factory = new Factory();
-        $container = $factory->load('dev', realpath(__DIR__ . '/../fakes/') . '/');
+        $container = $factory->load('dev', realpath(__DIR__ . '/../../../fakes/') . '/');
         /** @var Config $config */
         $config = $container->get(Config::class);
         self::assertSame('192.168.1.33', $config->getRemoteHost(), 'Not replace value from distribution');
@@ -42,7 +42,7 @@ final class FactoryTest extends TestCase
     public function testLoadNotExists(): void
     {
         $factory = new Factory();
-        $container = $factory->load('test', realpath(__DIR__ . '/../fakes/') . '/');
+        $container = $factory->load('test', realpath(__DIR__ . '/../../../fakes/') . '/');
         /** @var Config $config */
         $config = $container->get(Config::class);
         self::assertSame('', $config->getRemoteHost());

@@ -2,12 +2,10 @@
 
 declare(strict_types=1);
 
-namespace tests\Informer;
+namespace Vasoft\BxBackupTools\Informer;
 
-use Vasoft\BxBackupTools\Informer\MockTrait;
 use PHPUnit\Framework\TestCase;
 use Vasoft\BxBackupTools\Core\MessageContainer;
-use Vasoft\BxBackupTools\Informer\DiskSpace;
 
 include_once __DIR__ . '/MockTrait.php';
 
@@ -40,6 +38,7 @@ final class DiskSpaceTest extends TestCase
         self::assertCount(1, $messages, 'Must be one message');
         self::assertSame('Free space on disk ' . $path . ': 4.5 MiB', $messages[0]);
     }
+
     public function testCustomMessage(): void
     {
         $path = '/path/to/dir';

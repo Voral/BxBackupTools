@@ -145,7 +145,7 @@ final class BitrixRestoreTest extends TestCase
     public function testCanFindAllExtensions(string $fileName, string $command): void
     {
         $this->cleanArchivePath();
-        copy(realpath(__DIR__ . '/../fakes/') . '/' . $fileName, $this->archivePath . '/' . $fileName);
+        copy(realpath(__DIR__ . '/../../../fakes/') . '/' . $fileName, $this->archivePath . '/' . $fileName);
         $this->initMock();
         $messageContainer = new MessageContainer();
         $bitrixRestore = new BitrixRestore($this->systemMock, $this->configMock);
