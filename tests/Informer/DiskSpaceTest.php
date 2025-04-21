@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace tests\Informer;
 
+use Vasoft\BxBackupTools\Informer\MockTrait;
 use PHPUnit\Framework\TestCase;
 use Vasoft\BxBackupTools\Core\MessageContainer;
 use Vasoft\BxBackupTools\Informer\DiskSpace;
-use Vasoft\BxBackupTools\Informer\MockTrait;
+
+include_once __DIR__ . '/MockTrait.php';
 
 /**
  * @coversDefaultClass \Vasoft\BxBackupTools\Informer\DiskSpace
@@ -37,6 +39,20 @@ final class DiskSpaceTest extends TestCase
         self::assertSame(1, self::$mockDiskFreeSpaceCount, 'Mast disk_free_space() called once');
         self::assertCount(1, $messages, 'Must be one message');
         self::assertSame('Free space on disk ' . $path . ': 4.5 MiB', $messages[0]);
+    }
+    public function testCustomMessage(): void
+    {
+        $path = '/path/to/dir';
+        $this->clearMockDiskFreeSpace([
+            $path => 4699904,
+        ]);
+        $container = new MessageContainer();
+        $task = new DiskSpace($path, 5, 'Main disk:');
+        $task->handle($container);
+        $messages = $container->getStringArray();
+        self::assertSame(1, self::$mockDiskFreeSpaceCount, 'Mast disk_free_space() called once');
+        self::assertCount(1, $messages, 'Must be one message');
+        self::assertSame('Main disk: 4.5 MiB', $messages[0]);
     }
 
     public function testShowInformationInMiBGreaterThanLimit(): void
