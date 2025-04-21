@@ -6,6 +6,7 @@ namespace Vasoft\BxBackupTools\Informer;
 
 use PHPUnit\Framework\TestCase;
 use Vasoft\BxBackupTools\Core\MessageContainer;
+use Vasoft\BxBackupTools\Enums\DataSizeUnit;
 
 include_once __DIR__ . '/MockTrait.php';
 
@@ -37,6 +38,58 @@ final class DiskSpaceTest extends TestCase
         self::assertSame(1, self::$mockDiskFreeSpaceCount, 'Mast disk_free_space() called once');
         self::assertCount(1, $messages, 'Must be one message');
         self::assertSame('Free space on disk ' . $path . ': 4.5 MiB', $messages[0]);
+    }
+
+    public function testShowInformationInGiB(): void
+    {
+        $path = '/path/to/dir';
+        $this->clearMockDiskFreeSpace([
+            $path => 4699904000,
+        ]);
+        $container = new MessageContainer();
+        $task = new DiskSpace($path, 5000, unit: DataSizeUnit::GiB);
+        $task->handle($container);
+        $messages = $container->getStringArray();
+        self::assertSame('Free space on disk ' . $path . ': 4.4 GiB', $messages[0]);
+    }
+
+    public function testShowInformationInTiB(): void
+    {
+        $path = '/path/to/dir';
+        $this->clearMockDiskFreeSpace([
+            $path => 4699904000000,
+        ]);
+        $container = new MessageContainer();
+        $task = new DiskSpace($path, 5000, unit: DataSizeUnit::TiB);
+        $task->handle($container);
+        $messages = $container->getStringArray();
+        self::assertSame('Free space on disk ' . $path . ': 4.3 TiB', $messages[0]);
+    }
+
+    public function testShowInformationInKiB(): void
+    {
+        $path = '/path/to/dir';
+        $this->clearMockDiskFreeSpace([
+            $path => 4699904,
+        ]);
+        $container = new MessageContainer();
+        $task = new DiskSpace($path, 5000, unit: DataSizeUnit::KiB);
+        $task->handle($container);
+        $messages = $container->getStringArray();
+        self::assertSame('Free space on disk ' . $path . ': 4589.8 KiB', $messages[0]);
+    }
+
+    public function testShowInformationInB(): void
+    {
+        $path = '/path/to/dir';
+        $this->clearMockDiskFreeSpace([
+            $path => 4699904,
+        ]);
+        $container = new MessageContainer();
+        $task = new DiskSpace($path, 5000000, unit: DataSizeUnit::B);
+        $task->handle($container);
+        $messages = $container->getStringArray();
+        self::assertSame('Free space on disk ' . $path . ': 4699904.0 B', $messages[0]);
     }
 
     public function testCustomMessage(): void
